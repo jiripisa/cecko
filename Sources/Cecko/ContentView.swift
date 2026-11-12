@@ -52,6 +52,9 @@ struct ContentView: View {
                 if workspace.compilerStatus == .missing {
                     CompilerMissingView(workspace: workspace)
                 }
+                if let error = workspace.document?.saveError {
+                    SaveErrorBar(message: error)
+                }
                 editorArea
             }
         } console: {
@@ -63,7 +66,8 @@ struct ContentView: View {
 
     @ViewBuilder private var editorArea: some View {
         if let doc = workspace.document {
-            CodeEditor(document: doc, theme: theme, diagnostics: workspace.run.diagnostics,
+            CodeEditor(document: doc, theme: theme,
+                       diagnostics: workspace.run.diagnosticsFile == doc.url ? workspace.run.diagnostics : [],
                        lineToReveal: workspace.lineToReveal) { workspace.run.clearDiagnostics() }
                 .background(ThemedBackground(area: .editor))
                 .themedPanel(theme)
@@ -265,5 +269,26 @@ struct EditorConsoleSplit<Editor: View, Console: View>: View {
                     .onEnded { _ in dragStart = nil }
             )
             .accessibilityHidden(true)
+    }
+}
+
+/// A red strip above the editor while the open file cannot be saved.
+private struct SaveErrorBar: View {
+    @Environment(\.theme) private var theme
+    let message: String
+
+    var body: some View {
+        Label {
+            Text(String(localized: "Changes can't be saved: \(message)"))
+                .lineLimit(2)
+        } icon: {
+            Image(systemName: "exclamationmark.triangle.fill")
+        }
+        .font(theme.uiFont(.callout))
+        .foregroundStyle(.white)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(theme.colors.errorBubble.color)
     }
 }

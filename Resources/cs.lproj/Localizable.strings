@@ -45,3 +45,7 @@
 "Choose a file on the left, or create a new one." = "Vyber soubor vlevo, nebo vytvoř nový.";
 "Choose the folder where you keep your C++ programs. Cecko shows its files on the left; press Run to compile and start the open program." = "Vyber složku, ve které máš své programy v C++. Cecko ukáže její soubory vlevo; tlačítkem Run otevřený program přeložíš a spustíš.";
 "To run programs, Cecko needs Apple's free developer tools (Command Line Tools). Click Install, confirm the dialog and wait until the download finishes (a few minutes). Then click Check Again." = "Aby šly programy spouštět, potřebuje Cecko bezplatné vývojářské nástroje od Applu (Command Line Tools). Klikni na Instalovat, potvrď dialog a počkej, až se stáhnou (pár minut). Pak klikni na Zkontrolovat znovu.";
+"“%@” could not be saved." = "„%@“ se nepodařilo uložit.";
+"Keep Editing" = "Pokračovat v úpravách";
+"Discard Changes" = "Zahodit změny";
+"Changes can't be saved: %@" = "Změny nejde uložit: %@";

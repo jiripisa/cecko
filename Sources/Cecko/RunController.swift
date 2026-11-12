@@ -12,8 +12,10 @@ final class RunController {
 
     private(set) var state: State = .idle
     private(set) var console = ConsoleBuffer()
-    /// Diagnostics of the last compile, shown in the editor.
+    /// Diagnostics of the last compile, shown in the editor of `diagnosticsFile`.
     private(set) var diagnostics: [Diagnostic] = []
+    /// The source file the last compile (and its console links) was about.
+    private(set) var diagnosticsFile: URL?
 
     @ObservationIgnored private var process: PTYProcess?
     @ObservationIgnored private var stopRequested = false
@@ -66,6 +68,7 @@ final class RunController {
 
         console.clear()
         diagnostics = []
+        diagnosticsFile = file
         state = .compiling
         console.append(String(localized: "Compiling \(file.lastPathComponent)…") + "\n", kind: .status)
 

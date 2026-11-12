@@ -98,6 +98,8 @@ private struct ConsoleOutput: NSViewRepresentable {
         textView.isVerticallyResizable = true
         textView.autoresizingMask = [.width]
         textView.textContainer?.widthTracksTextView = true
+        // Lay out only what is visible: endless output stays smooth.
+        textView.layoutManager?.allowsNonContiguousLayout = true
         textView.delegate = context.coordinator
         let scrollView = NSScrollView()
         scrollView.documentView = textView
@@ -112,13 +114,30 @@ private struct ConsoleOutput: NSViewRepresentable {
         let coordinator = context.coordinator
         coordinator.onJumpToLine = onJumpToLine
         guard let textView = coordinator.textView, let storage = textView.textStorage else { return }
-        guard coordinator.lastSegments != buffer.segments || coordinator.lastTheme != theme.id
-                || coordinator.lastBackground != theme.colors.consoleBackground else { return }
+        let styleChanged = coordinator.lastTheme != theme.id
+            || coordinator.lastBackground != theme.colors.consoleBackground
+        let rebuild = styleChanged || coordinator.generation != buffer.generation
+            || buffer.trimmedLength > coordinator.appended   // more dropped than the view ever showed
+        guard rebuild || coordinator.appended != buffer.appendedLength else { return }
 
         let wasAtBottom = scrollView.documentVisibleRect.maxY >= textView.bounds.maxY - 20
-        storage.setAttributedString(attributed(buffer.segments))
+        if rebuild {
+            storage.setAttributedString(attributed(buffer.segments))
+        } else {
+            // Append only the new text and drop what the buffer trimmed, so the
+            // selection survives and nothing is laid out twice.
+            storage.beginEditing()
+            storage.append(attributed(buffer.segments(since: coordinator.appended)))
+            let dropped = buffer.trimmedLength - coordinator.trimmed
+            if dropped > 0 {
+                storage.deleteCharacters(in: NSRange(location: 0, length: min(dropped, storage.length)))
+            }
+            storage.endEditing()
+        }
         textView.linkTextAttributes = [.cursor: NSCursor.pointingHand]
-        coordinator.lastSegments = buffer.segments
+        coordinator.appended = buffer.appendedLength
+        coordinator.trimmed = buffer.trimmedLength
+        coordinator.generation = buffer.generation
         coordinator.lastTheme = theme.id
         coordinator.lastBackground = theme.colors.consoleBackground
         if wasAtBottom { textView.scrollToEndOfDocument(nil) }
@@ -167,7 +186,9 @@ private struct ConsoleOutput: NSViewRepresentable {
     final class Coordinator: NSObject, NSTextViewDelegate {
         weak var textView: NSTextView?
         var onJumpToLine: ((Int) -> Void)?
-        var lastSegments: [ConsoleSegment] = []
+        var appended = -1
+        var trimmed = 0
+        var generation = -1
         var lastTheme: ThemeID?
         var lastBackground: RGBA?
 

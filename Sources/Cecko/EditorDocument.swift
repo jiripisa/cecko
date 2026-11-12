@@ -38,16 +38,21 @@ final class EditorDocument {
         self.savedText = decoded.text
     }
 
-    func saveNow() {
+    /// Writes the text if it changed. Returns false when writing failed (a
+    /// locked file, a read-only folder, a full disk); `saveError` says why.
+    @discardableResult
+    func saveNow() -> Bool {
         autosaveTask?.cancel()
         autosaveTask = nil
-        guard isDirty else { return }
+        guard isDirty else { return true }
         do {
             try SourceCodec.encode(text, as: encoding).write(to: url, options: .atomic)
             savedText = text
             saveError = nil
+            return true
         } catch {
             saveError = error.localizedDescription
+            return false
         }
     }
 

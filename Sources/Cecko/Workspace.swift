@@ -60,13 +60,21 @@ final class Workspace {
     // MARK: Root folder
 
     func setRoot(_ url: URL) {
-        document?.saveNow()
+        guard canLeaveDocument() else { return }
         let root = url.standardizedFileURL
         rootURL = root
         UserDefaults.standard.set(root.path, forKey: Keys.root)
         if let doc = document, !isInsideRoot(doc.url) { closeDocument() }
-        watcher = FolderWatcher(url: root) { [weak self] in
-            MainActor.assumeIsolated { self?.refresh() }
+        tree = []
+        watcher = FolderWatcher(url: root) { [weak self] paths in
+            MainActor.assumeIsolated {
+                guard let self, let rootPath = self.rootURL?.path else { return }
+                // Resolve /private/tmp vs /tmp the same way as the root.
+                let relevant = paths.contains {
+                    FileTree.isRelevantChange(path: URL(fileURLWithPath: $0).standardizedFileURL.path, root: rootPath)
+                }
+                if relevant { self.refresh() }
+            }
         }
         refresh()
     }
@@ -105,10 +113,22 @@ final class Workspace {
         return String(url.standardizedFileURL.path.dropFirst(root.path.count + 1))
     }
 
-    /// Rescans the tree and picks up changes to the open file made elsewhere.
+    @ObservationIgnored private var scanGeneration = 0
+
+    /// Rescans the tree (off the main thread) and picks up changes to the
+    /// open file made elsewhere.
     func refresh() {
         guard let root = rootURL else { return }
-        tree = (try? FileTree.scan(root)) ?? []
+        scanGeneration += 1
+        let generation = scanGeneration
+        Task.detached(priority: .userInitiated) {
+            let scanned = (try? FileTree.scan(root)) ?? []
+            await MainActor.run {
+                let ws = Workspace.shared
+                guard ws.scanGeneration == generation, ws.rootURL == root else { return }
+                if ws.tree != scanned { ws.tree = scanned }
+            }
+        }
         if let doc = document {
             if FileManager.default.fileExists(atPath: doc.url.path) {
                 doc.reloadIfChangedOnDisk()
@@ -123,8 +143,10 @@ final class Workspace {
     func openFile(_ url: URL) {
         let url = url.standardizedFileURL
         guard url != document?.url else { return }
-        document?.saveNow()
-        run.clearDiagnostics()
+        guard canLeaveDocument() else {
+            selection = document?.url
+            return
+        }
         if let doc = EditorDocument(url: url) {
             document = doc
             unreadableFile = nil
@@ -140,12 +162,30 @@ final class Workspace {
         document = nil
         unreadableFile = nil
         selection = nil
-        run.clearDiagnostics()
         UserDefaults.standard.removeObject(forKey: Keys.lastFile)
     }
 
+    /// Shows a line of the file the last compile was about, opening that
+    /// file first if another one is open.
     func reveal(line: Int) {
+        if let file = run.diagnosticsFile, file != document?.url {
+            openFile(file)
+            guard document?.url == file else { return }
+        }
         lineToReveal = (line, UUID())
+    }
+
+    /// Saves the open file before it is closed or replaced. When saving fails,
+    /// asks whether to stay (and keep the edits) or throw the edits away.
+    func canLeaveDocument() -> Bool {
+        guard let doc = document, !doc.saveNow() else { return true }
+        let alert = NSAlert()
+        alert.messageText = String(localized: "“\(doc.url.lastPathComponent)” could not be saved.")
+        alert.informativeText = doc.saveError ?? ""
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: String(localized: "Keep Editing"))
+        alert.addButton(withTitle: String(localized: "Discard Changes"))
+        return alert.runModal() == .alertSecondButtonReturn
     }
 
     // MARK: File operations (explorer)
@@ -179,7 +219,10 @@ final class Workspace {
         guard !trimmed.isEmpty, !trimmed.contains("/"), trimmed != url.lastPathComponent else { return }
         let wasOpen = document?.url == url.standardizedFileURL
         let openInside = document.map { $0.url.path.hasPrefix(url.path + "/") } ?? false
-        if wasOpen || openInside { document?.saveNow() }
+        if wasOpen || openInside, let doc = document, !doc.saveNow() {
+            showError(String(localized: "“\(doc.url.lastPathComponent)” could not be saved.") + " " + (doc.saveError ?? ""))
+            return
+        }
         if let renamed = perform({ try FileOperations.rename(url, to: trimmed) }) {
             if wasOpen {
                 document = nil
@@ -244,7 +287,11 @@ final class Workspace {
 
     func runOpenFile() {
         guard canRun, let doc = document, let toolchain else { return }
-        doc.saveNow()
+        guard doc.saveNow() else {
+            // Compiling the old file on disk would silently ignore the edits.
+            showError(String(localized: "“\(doc.url.lastPathComponent)” could not be saved.") + " " + (doc.saveError ?? ""))
+            return
+        }
         run.run(file: doc.url, toolchain: toolchain, theme: ThemeData.named(themeID))
     }
 }

@@ -84,6 +84,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidResignActive(_ notification: Notification) {
-        MainActor.assumeIsolated { Workspace.shared.document?.saveNow() }
+        MainActor.assumeIsolated { _ = Workspace.shared.document?.saveNow() }
     }
 }

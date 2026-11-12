@@ -59,7 +59,13 @@ public struct Toolchain: Sendable {
     }
 
     public func compile(sources: [URL], output: URL) async -> CompileResult {
-        let arguments = compileArguments(sources: sources, output: output)
+        let prepared = Self.utf8Sources(for: sources, in: output.deletingLastPathComponent())
+        var arguments = compileArguments(sources: prepared.sources, output: output)
+        // A converted copy lives elsewhere: keep `#include "x.h"` finding the
+        // headers next to the original.
+        for dir in prepared.originalDirectories {
+            arguments.insert(contentsOf: ["-iquote", dir.path], at: 1)
+        }
         return await withCheckedContinuation { continuation in
             DispatchQueue.global().async {
                 let process = Process()
@@ -88,6 +94,31 @@ public struct Toolchain: Sendable {
                     rawOutput: output))
             }
         }
+    }
+
+    /// clang reads only UTF-8. A Windows-1250 file (Code::Blocks on Czech
+    /// Windows) is compiled from a UTF-8 copy in `directory`; `#line` keeps
+    /// errors pointing at the original file and line.
+    static func utf8Sources(for sources: [URL], in directory: URL) -> (sources: [URL], originalDirectories: [URL]) {
+        var result: [URL] = []
+        var directories: [URL] = []
+        for source in sources {
+            guard let data = try? Data(contentsOf: source) else { result.append(source); continue }
+            let decoded = SourceCodec.decode(data)
+            guard decoded.encoding == .windows1250 else { result.append(source); continue }
+            let copy = directory.appendingPathComponent("utf8-" + source.lastPathComponent)
+            let escaped = source.path.replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            let text = "#line 1 \"\(escaped)\"\n" + decoded.text
+            if (try? Data(text.utf8).write(to: copy)) != nil {
+                result.append(copy)
+                let dir = source.deletingLastPathComponent()
+                if !directories.contains(dir) { directories.append(dir) }
+            } else {
+                result.append(source)
+            }
+        }
+        return (result, directories)
     }
 
     /// Runs a tool and returns its output, or nil when it fails.

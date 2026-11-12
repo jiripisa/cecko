@@ -36,6 +36,12 @@ public struct ConsoleBuffer: Sendable {
     public let limit: Int
     public private(set) var segments: [ConsoleSegment] = []
     private var length = 0   // total UTF-16 units across segments
+    /// UTF-16 units appended since the last clear (kept + trimmed).
+    public private(set) var appendedLength = 0
+    /// UTF-16 units dropped from the start because of the limit.
+    public private(set) var trimmedLength = 0
+    /// Changes on every clear, so a view knows to rebuild instead of append.
+    public private(set) var generation = 0
 
     private static let ansi = try! NSRegularExpression(pattern: "\u{1B}\\[[0-9;?]*[ -/]*[@-~]")
 
@@ -58,12 +64,38 @@ public struct ConsoleBuffer: Sendable {
             segments.append(ConsoleSegment(text: clean, kind: kind))
         }
         length += clean.utf16.count
+        appendedLength += clean.utf16.count
         trim()
     }
 
     public mutating func clear() {
         segments.removeAll()
         length = 0
+        appendedLength = 0
+        trimmedLength = 0
+        generation += 1
+    }
+
+    /// The text appended after `mark` (an earlier `appendedLength`), as
+    /// segments. If that text was already trimmed, returns what is kept.
+    public func segments(since mark: Int) -> [ConsoleSegment] {
+        var offset = trimmedLength   // absolute offset of segments[0]
+        var result: [ConsoleSegment] = []
+        for segment in segments {
+            let count = segment.text.utf16.count
+            defer { offset += count }
+            if offset + count <= mark { continue }
+            if offset >= mark {
+                result.append(segment)
+            } else {
+                let utf16 = segment.text.utf16
+                let cut = utf16.index(utf16.startIndex, offsetBy: mark - offset)
+                let start = cut.samePosition(in: segment.text)
+                    ?? segment.text.rangeOfComposedCharacterSequence(at: cut).upperBound
+                result.append(ConsoleSegment(text: String(segment.text[start...]), kind: segment.kind))
+            }
+        }
+        return result
     }
 
     public var plainText: String {
@@ -77,6 +109,7 @@ public struct ConsoleBuffer: Sendable {
             if firstLength <= excess {
                 segments.removeFirst()
                 length -= firstLength
+                trimmedLength += firstLength
             } else {
                 // Cut at a character boundary at or after `excess` UTF-16 units.
                 let text = first.text
@@ -85,6 +118,7 @@ public struct ConsoleBuffer: Sendable {
                     ?? text.rangeOfComposedCharacterSequence(at: cut).upperBound
                 let kept = String(text[start...])
                 length -= firstLength - kept.utf16.count
+                trimmedLength += firstLength - kept.utf16.count
                 segments[0].text = kept
             }
         }

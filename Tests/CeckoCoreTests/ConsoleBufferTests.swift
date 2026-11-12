@@ -66,3 +66,44 @@ struct ConsoleBufferDiagnosticTests {
         #expect(b.segments[1].kind == .diagnostic(severity: .error, line: 5))
     }
 }
+
+@Suite("ConsoleBuffer incremental")
+struct ConsoleBufferIncrementalTests {
+
+    @Test("Only text appended since a mark is returned")
+    func segmentsSinceMark() {
+        var b = ConsoleBuffer()
+        b.append("a", kind: .status)
+        b.append("bc", kind: .output)
+        let mark = b.appendedLength
+        b.append("d", kind: .output)
+        b.append("e\n", kind: .input)
+        #expect(b.segments(since: mark) == [
+            ConsoleSegment(text: "d", kind: .output),
+            ConsoleSegment(text: "e\n", kind: .input),
+        ])
+        #expect(b.segments(since: b.appendedLength).isEmpty)
+    }
+
+    @Test("Trimmed length counts what the limit dropped")
+    func trimmedLengthCounts() {
+        var b = ConsoleBuffer(limit: 10)
+        b.append("0123456789", kind: .output)
+        #expect(b.trimmedLength == 0)
+        b.append("abcd", kind: .output)
+        #expect(b.trimmedLength == 4)
+        #expect(b.plainText == "456789abcd")
+        #expect(b.appendedLength == 14)
+    }
+
+    @Test("Clear starts a new generation")
+    func clearBumpsGeneration() {
+        var b = ConsoleBuffer()
+        let g = b.generation
+        b.append("x", kind: .output)
+        b.clear()
+        #expect(b.generation != g)
+        #expect(b.appendedLength == 0)
+        #expect(b.trimmedLength == 0)
+    }
+}

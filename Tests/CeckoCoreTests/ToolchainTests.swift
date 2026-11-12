@@ -110,3 +110,45 @@ struct ToolchainTests {
         #expect(RunOutcome(.exited(0), stoppedByUser: true) == .finished)
     }
 }
+
+@Suite("Toolchain Windows-1250")
+struct ToolchainWindows1250Tests {
+
+    @Test("A Windows-1250 file compiles without encoding warnings and prints UTF-8", .enabled(if: hasCompiler))
+    func windows1250SourceRunsWithCzechOutput() async throws {
+        let dir = TempDir()
+        // #include <cstdio>\nint main() { printf("čí\n"); }   with č = E8, í = ED
+        var bytes = Array("#include <cstdio>\nint main() { printf(\"".utf8)
+        bytes += [0xE8, 0xED]
+        bytes += Array("\\n\"); }\n".utf8)
+        let src = dir.url.appendingPathComponent("ucitel.cpp")
+        try Data(bytes).write(to: src)
+        let toolchain = try Toolchain(supportDirectory: dir.url)
+        let out = try toolchain.makeOutputURL(for: src)
+        let result = await toolchain.compile(sources: [src], output: out)
+        #expect(result.succeeded, "\(result.rawOutput)")
+        #expect(result.diagnostics.isEmpty, "\(result.rawOutput)")
+
+        let r = ProcessRecorder()
+        try r.start(PTYProcess(executable: out, currentDirectory: dir.url))
+        #expect(await r.wait { r.termination != nil })
+        #expect(r.output == "čí\n")
+    }
+
+    @Test("Errors in a Windows-1250 file point to the original file and line", .enabled(if: hasCompiler))
+    func windows1250DiagnosticsKeepOriginalLocation() async throws {
+        let dir = TempDir()
+        dir.file("hlavicka.h", "int dvakrat(int x) { return 2 * x; }\n")
+        var bytes = Array("#include \"hlavicka.h\"\n// ".utf8) + [0xE8] + Array("\nint main() {\n    int a = dvakrat(1)\n}\n".utf8)
+        let src = dir.url.appendingPathComponent("chyba.cpp")
+        try Data(bytes).write(to: src)
+        bytes = []
+        let toolchain = try Toolchain(supportDirectory: dir.url)
+        let result = await toolchain.compile(sources: [src], output: try toolchain.makeOutputURL(for: src))
+        #expect(!result.succeeded)
+        let errors = result.diagnostics.filter { $0.severity == .error }
+        #expect(errors.count == 1, "\(result.rawOutput)")
+        #expect(errors.first?.file == src.path)
+        #expect(errors.first?.line == 4)
+    }
+}

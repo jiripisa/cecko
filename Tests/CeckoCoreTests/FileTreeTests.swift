@@ -124,3 +124,39 @@ struct FileOperationsTests {
         #expect(!FileOperations.isHighlighted(u("a.txt")))
     }
 }
+
+@Suite("FileTree limits")
+struct FileTreeLimitTests {
+
+    @Test("Packages such as .app are shown as items, not scanned into")
+    func scanSkipsPackageContents() throws {
+        let dir = TempDir()
+        dir.file("Hra.app/Contents/Info.plist", "<plist/>")
+        let nodes = try FileTree.scan(dir.url)
+        #expect(nodes.map(\.name) == ["Hra.app"])
+        #expect(nodes[0].children == nil || nodes[0].children == [])
+    }
+
+    @Test("Scanning stops at the item limit")
+    func scanStopsAtItemLimit() throws {
+        let dir = TempDir()
+        for i in 0..<30 { dir.file("a/\(i).cpp") }
+        for i in 0..<30 { dir.file("b/\(i).cpp") }
+        var count = 0
+        func countAll(_ nodes: [FileNode]) { for n in nodes { count += 1; countAll(n.children ?? []) } }
+        countAll(try FileTree.scan(dir.url, limit: 40))
+        #expect(count <= 40)
+        #expect(count >= 30)
+    }
+
+    @Test("Changes under hidden folders or build output are ignored")
+    func relevantChanges() {
+        let root = "/Users/x/ukoly"
+        #expect(FileTree.isRelevantChange(path: "/Users/x/ukoly/a.cpp", root: root))
+        #expect(FileTree.isRelevantChange(path: "/Users/x/ukoly/domaci/b.cpp", root: root))
+        #expect(!FileTree.isRelevantChange(path: "/Users/x/ukoly/.git/index", root: root))
+        #expect(!FileTree.isRelevantChange(path: "/Users/x/ukoly/Library/.cache/z", root: root))
+        #expect(!FileTree.isRelevantChange(path: "/Users/x/ukoly/build/out.o", root: root))
+        #expect(!FileTree.isRelevantChange(path: "/Users/x/ukoly/Hra.app/Contents/x", root: root))
+    }
+}

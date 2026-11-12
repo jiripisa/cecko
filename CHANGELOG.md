@@ -9,6 +9,7 @@
 - Moving the open file to the Trash keeps your last edits.
 - After a program ends, typing goes back to the editor.
 - No focus ring around the theme and Run buttons.
+- New app icon.
 
 ## 0.1.0 — 2026-11-12
 

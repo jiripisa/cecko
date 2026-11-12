@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-11-12
 
 - Files from Windows with unusual bytes keep every byte when saved.
 - Linker warnings no longer count as compile errors.

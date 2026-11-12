@@ -46,6 +46,16 @@ struct FileTreeTests {
         #expect(try FileTree.scan(dir.url).map(\.name) == ["a.cpp"])
     }
 
+    @Test("Node URLs are standardized, so they equal URLs opened elsewhere")
+    func nodeURLsAreStandardized() throws {
+        let dir = TempDir()
+        dir.file("ukoly/a.cpp")
+        let root = URL(fileURLWithPath: "/private" + dir.url.path, isDirectory: true)
+        let nodes = try FileTree.scan(root)
+        #expect(nodes.allSatisfy { $0.url == $0.url.standardizedFileURL })
+        #expect(nodes[0].children?[0].url == dir.url.appendingPathComponent("ukoly/a.cpp").standardizedFileURL)
+    }
+
     @Test("Folders carry their children")
     func nestedChildren() throws {
         let dir = TempDir()

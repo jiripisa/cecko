@@ -29,10 +29,13 @@ public enum FileTree {
                                               includingPropertiesForKeys: [.isDirectoryKey],
                                               options: [.skipsHiddenFiles])
         var nodes: [FileNode] = []
-        for url in urls {
+        for found in urls {
+            // Standardized, so a node equals the same file reached another way
+            // (`/private/tmp/…` vs `/tmp/…`).
+            let url = found.standardizedFileURL
             let name = url.lastPathComponent
             if skippedNames.contains(name) || name.hasSuffix(".dSYM") { continue }
-            let isDir = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+            let isDir = (try? found.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
             let children = isDir ? ((try? scan(url)) ?? []) : nil
             nodes.append(FileNode(url: url, isDirectory: isDir, children: children))
         }

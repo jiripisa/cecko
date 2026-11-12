@@ -70,10 +70,16 @@ public enum DiagnosticParser {
             }
             if line.hasPrefix("ld: ") {
                 inUndefinedSymbols = false
-                sawLinkerError = true
                 var message = String(line.dropFirst(4))
-                if message.hasPrefix("error: ") { message = String(message.dropFirst(7)) }
-                result.append(Diagnostic(file: nil, line: nil, column: nil, severity: .error,
+                var severity = Severity.error
+                if message.hasPrefix("error: ") {
+                    message = String(message.dropFirst(7))
+                } else if message.hasPrefix("warning: ") {
+                    message = String(message.dropFirst(9))
+                    severity = .warning
+                }
+                if severity == .error { sawLinkerError = true }
+                result.append(Diagnostic(file: nil, line: nil, column: nil, severity: severity,
                                          message: message, notes: pendingLinkerNotes))
                 pendingLinkerNotes = []
                 continue

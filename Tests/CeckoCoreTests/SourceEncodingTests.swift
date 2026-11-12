@@ -51,3 +51,25 @@ struct SourceEncodingTests {
         #expect(SourceCodec.encode(text, as: .windows1250) == Data(text.utf8))
     }
 }
+
+@Suite("SourceEncoding undefined bytes")
+struct SourceEncodingUndefinedByteTests {
+
+    @Test("Bytes Windows-1250 leaves undefined survive a round trip")
+    func undefinedBytesRoundTrip() {
+        let original = Data([0x81, 0xE8, 0x83, 0x88, 0x90, 0x98, 0x9A])
+        let decoded = SourceCodec.decode(original)
+        #expect(decoded.encoding == .windows1250)
+        #expect(decoded.text.contains("č"))
+        #expect(decoded.text.contains("š"))
+        #expect(!decoded.text.contains("\u{FFFD}"))
+        #expect(SourceCodec.encode(decoded.text, as: .windows1250) == original)
+    }
+
+    @Test("Edited text with an undefined byte still saves in Windows-1250")
+    func undefinedByteKeptAfterEdit() {
+        let decoded = SourceCodec.decode(Data([0x81, 0x41]))
+        let edited = decoded.text + "č"
+        #expect(SourceCodec.encode(edited, as: .windows1250) == Data([0x81, 0x41, 0xE8]))
+    }
+}

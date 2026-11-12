@@ -152,3 +152,26 @@ struct ToolchainWindows1250Tests {
         #expect(errors.first?.line == 4)
     }
 }
+
+@Suite("Toolchain C sources")
+struct ToolchainCSourceTests {
+
+    @Test("A .c file is compiled by the C compiler as C")
+    func cSourceUsesCCompiler() throws {
+        let dir = TempDir()
+        let toolchain = try Toolchain(supportDirectory: dir.url)
+        let args = toolchain.compileArguments(sources: [URL(fileURLWithPath: "/tmp/a.c")],
+                                              output: URL(fileURLWithPath: "/tmp/a"))
+        #expect(Array(args.prefix(2)) == ["clang", "-std=gnu17"])
+    }
+
+    @Test("Valid C that is invalid C++ compiles", .enabled(if: hasCompiler))
+    func cOnlyCodeCompiles() async throws {
+        let dir = TempDir()
+        let src = dir.file("pole.c", "#include <stdlib.h>\n#include <stdio.h>\nint main(void) { int *p = malloc(4 * sizeof(int)); p[0] = 7; printf(\"%d\\n\", p[0]); free(p); return 0; }\n")
+        let toolchain = try Toolchain(supportDirectory: dir.url)
+        let result = await toolchain.compile(sources: [src], output: try toolchain.makeOutputURL(for: src))
+        #expect(result.succeeded, "\(result.rawOutput)")
+        #expect(result.diagnostics.isEmpty, "\(result.rawOutput)")
+    }
+}

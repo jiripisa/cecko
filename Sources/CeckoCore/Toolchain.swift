@@ -42,9 +42,12 @@ public struct Toolchain: Sendable {
 
     /// Arguments for `/usr/bin/xcrun`. Takes a list of sources so a future
     /// "folder = one program" mode is an addition, not a rewrite.
+    /// Plain C (`.c` files only) goes to the C compiler; anything else is C++.
     public func compileArguments(sources: [URL], output: URL) -> [String] {
-        ["clang++", "-std=gnu++20", "-Wall", "-fno-color-diagnostics",
-         "-isystem", includeDirectory.path]
+        let isC = !sources.isEmpty && sources.allSatisfy { $0.pathExtension.lowercased() == "c" }
+        let compiler = isC ? ["clang", "-std=gnu17"] : ["clang++", "-std=gnu++20"]
+        return compiler
+            + ["-Wall", "-fno-color-diagnostics", "-isystem", includeDirectory.path]
             + sources.map(\.path)
             + ["-o", output.path]
     }
@@ -64,7 +67,7 @@ public struct Toolchain: Sendable {
         // A converted copy lives elsewhere: keep `#include "x.h"` finding the
         // headers next to the original.
         for dir in prepared.originalDirectories {
-            arguments.insert(contentsOf: ["-iquote", dir.path], at: 1)
+            arguments.insert(contentsOf: ["-iquote", dir.path], at: 2)
         }
         return await withCheckedContinuation { continuation in
             DispatchQueue.global().async {

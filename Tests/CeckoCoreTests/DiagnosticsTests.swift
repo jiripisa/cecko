@@ -80,4 +80,12 @@ struct DiagnosticsTests {
         #expect(d[0].severity == .error)
         #expect(d[0].message == "'conio.h' file not found")
     }
+
+    @Test("A linker warning is a warning, not an error")
+    func linkerWarningIsWarning() {
+        let d = DiagnosticParser.parse("ld: warning: ignoring duplicate libraries: '-lc++'")
+        #expect(d.count == 1)
+        #expect(d[0].severity == .warning)
+        #expect(d[0].message == "ignoring duplicate libraries: '-lc++'")
+    }
 }

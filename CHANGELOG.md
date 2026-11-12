@@ -9,7 +9,6 @@
 - Moving the open file to the Trash keeps your last edits.
 - After a program ends, typing goes back to the editor.
 - No focus ring around the theme and Run buttons.
-- Fixed the save-failure, big-folder, endless-output, Windows-1250 and error-link problems found before release (included in 0.1.0 builds after the review).
 
 ## 0.1.0 — 2026-11-12
 

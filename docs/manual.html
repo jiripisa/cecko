@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cecko Manual</title>
+<meta name="description" content="The Cecko manual: every control, with marked screenshots.">
+<link rel="alternate" hreflang="en" href="https://jiripisa.github.io/cecko/manual.html">
+<link rel="alternate" hreflang="cs" href="https://jiripisa.github.io/cecko/cs/manual.html">
+<link rel="alternate" hreflang="x-default" href="https://jiripisa.github.io/cecko/manual.html">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/manual.css">
+</head>
+<body>
+
+<header class="wrap masthead">
+  <a class="brand" href="index.html"><img src="assets/icon.png" alt="" width="32" height="32">Cecko</a>
+  <nav aria-label="Site">
+    <a href="index.html">Overview</a>
+    <a href="manual.html" aria-current="page">Manual</a>
+    <a href="index.html#get">Download</a>
+    <a class="lang" href="cs/manual.html" hreflang="cs" lang="cs">Česky</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap title">
+    <h1>Manual</h1>
+    <p>Every control of Cecko 0.1.0, where to find it and what it does.
+    The frames in the screenshots mark the control the text talks about.</p>
+  </div>
+
+  <div class="wrap layout">
+    <nav class="toc" aria-label="Contents">
+      <p>Contents</p>
+      <ol>
+        <li><a href="#start">Getting started</a></li>
+        <li><a href="#window">The main window</a></li>
+        <li><a href="#updates">Updates</a></li>
+      </ol>
+    </nav>
+
+    <article>
+      <section id="start">
+        <h2>Getting started</h2>
+        <ol>
+          <li>Download the disk image from the <a href="index.html#get">download page</a>
+          and open it.</li>
+          <li>Drag <b>Cecko</b> to <b>Applications</b> and start it from there.</li>
+        </ol>
+      </section>
+
+      <section id="window">
+        <h2>The main window</h2>
+        <!-- FILL: one figure per area of the window. Marks use percentages of
+             the whole image; --iw/--ih are the screenshot's pixel size. -->
+        <figure class="fig">
+          <div class="view" style="--iw:1400;--ih:800">
+            <img src="assets/cecko-window.png" alt="The Cecko window">
+          </div>
+        </figure>
+        <p>A simple, good-looking C++ editor for students: write code, press Run, done.</p>
+      </section>
+
+      <section id="updates">
+        <h2>Updates</h2>
+        <p>At every launch Cecko asks whether a newer version exists and, if
+        so, offers it; nothing is installed without your OK. <span class="ui">Cecko
+        › Check for Updates…</span> asks right away.</p>
+      </section>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Cecko by Jiří Píša. MIT License. Manual for version 0.1.0.</span>
+    <span><a href="index.html">Overview</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

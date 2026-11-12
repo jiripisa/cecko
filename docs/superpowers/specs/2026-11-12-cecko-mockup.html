@@ -1,0 +1,207 @@
+<style>
+  .ide{border-radius:14px;overflow:hidden;font:12px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .ide .bar{display:flex;align-items:center;gap:10px;padding:8px 12px;}
+  .ide .dots i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px}
+  .ide .dots i:nth-child(1){background:#ff5f57}.ide .dots i:nth-child(2){background:#febc2e}.ide .dots i:nth-child(3){background:#28c840}
+  .ide .title{flex:1;text-align:center;font-weight:600;opacity:.8}
+  .ide .run{padding:4px 14px;border-radius:999px;font-weight:700;cursor:default}
+  .ide .main{display:flex;height:300px}
+  .ide .side{width:150px;padding:10px 8px;font-size:11.5px}
+  .ide .side .h{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin:2px 6px 6px}
+  .ide .side .f{padding:3px 8px;border-radius:6px;white-space:nowrap}
+  .ide .right{flex:1;display:flex;flex-direction:column;min-width:0}
+  .ide .code{flex:1;padding:8px 0;font:11.5px/1.6 "SF Mono",Menlo,monospace;overflow:hidden;position:relative}
+  .ide .code div{padding:0 12px;white-space:pre}
+  .ide .ln{display:inline-block;width:22px;text-align:right;margin-right:14px;opacity:.4}
+  .ide .err{position:relative}
+  .ide .bubble{display:inline-block;margin-left:14px;padding:1px 8px;border-radius:6px;font:600 10.5px -apple-system,sans-serif;white-space:nowrap}
+  .ide .con{height:96px;padding:8px 14px;font:11.5px/1.6 "SF Mono",Menlo,monospace}
+  .ide .con .h{font:600 10px -apple-system,sans-serif;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:2px}
+  .caret{display:inline-block;width:7px;height:13px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* GLASS */
+  .wall-glass{padding:22px;border-radius:18px;background:radial-gradient(circle at 20% 20%,#7cc4ff,transparent 55%),radial-gradient(circle at 80% 30%,#ff9ad5,transparent 50%),radial-gradient(circle at 50% 90%,#9bffcf,transparent 55%),#c9d6ff}
+  .t-glass{background:rgba(255,255,255,.35);backdrop-filter:blur(30px) saturate(1.6);border:1px solid rgba(255,255,255,.7);color:#1d1d1f}
+  .t-glass .run{background:rgba(255,255,255,.75);color:#0a7d2c;border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(0,0,0,.1)}
+  .t-glass .side{background:rgba(255,255,255,.25)}
+  .t-glass .side .sel{background:rgba(0,122,255,.18);color:#0058c4;font-weight:600}
+  .t-glass .code{background:rgba(255,255,255,.82);margin:0 8px 0 0;border-radius:10px 10px 0 0}
+  .t-glass .con{background:rgba(250,250,252,.9);margin:6px 8px 8px 0;border-radius:10px}
+  .t-glass .k{color:#ad3da4;font-weight:600}.t-glass .s{color:#c41a16}.t-glass .n{color:#1c00cf}.t-glass .p{color:#78492a}.t-glass .ty{color:#3900a0}
+  .t-glass .err{background:rgba(255,59,48,.12);box-shadow:inset 3px 0 #ff3b30}
+  .t-glass .bubble{background:#ff3b30;color:#fff}
+  .t-glass .in{color:#007aff;font-weight:600}.t-glass .ok{color:#0a7d2c}.t-glass .bad{color:#d70015}.t-glass .caret{background:#007aff}
+
+  /* HACKER */
+  .t-hacker{background:#020802;color:#33ff66;font-family:"SF Mono",Menlo,monospace;border:1px solid #0f3;text-shadow:0 0 6px rgba(51,255,102,.6);position:relative}
+  .t-hacker::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px)}
+  .t-hacker .bar{border-bottom:1px solid #0a4d1c}
+  .t-hacker .dots i{background:#0a4d1c!important}
+  .t-hacker .run{border:1px solid #33ff66;border-radius:2px;color:#33ff66;font-family:inherit}
+  .t-hacker .side{border-right:1px solid #0a4d1c;font-family:inherit}
+  .t-hacker .side .sel{background:#33ff66;color:#020802;text-shadow:none}
+  .t-hacker .k{color:#b6ff00}.t-hacker .s{color:#00e5ff}.t-hacker .n{color:#ffd400}.t-hacker .p{color:#4dff88;opacity:.7}.t-hacker .ty{color:#b6ff00}
+  .t-hacker .err{background:rgba(255,0,60,.18);box-shadow:inset 3px 0 #ff003c}
+  .t-hacker .bubble{background:#ff003c;color:#000;text-shadow:none;font-family:"SF Mono",Menlo,monospace;border-radius:0}
+  .t-hacker .con{border-top:1px solid #0a4d1c}
+  .t-hacker .in{color:#fff}.t-hacker .ok{color:#33ff66}.t-hacker .bad{color:#ff003c}.t-hacker .caret{background:#33ff66}
+
+  /* SYNTHWAVE */
+  .t-synth{background:linear-gradient(180deg,#1b0b3a,#2a0f4d 70%,#3d0f4f);color:#f3e8ff;border:1px solid #ff4fd8}
+  .t-synth .bar{background:rgba(255,79,216,.08)}
+  .t-synth .run{background:linear-gradient(90deg,#ff4fd8,#ff9a3c);color:#1b0b3a;box-shadow:0 0 16px #ff4fd8}
+  .t-synth .side{background:linear-gradient(180deg,transparent 60%,rgba(255,154,60,.25));position:relative}
+  .t-synth .side .sel{background:rgba(54,249,246,.15);color:#36f9f6;box-shadow:inset 2px 0 #36f9f6}
+  .t-synth .k{color:#ff4fd8;text-shadow:0 0 8px #ff4fd8}.t-synth .s{color:#36f9f6}.t-synth .n{color:#ffd166}.t-synth .p{color:#c792ea}.t-synth .ty{color:#ff9a3c}
+  .t-synth .err{background:rgba(255,60,90,.2);box-shadow:inset 3px 0 #ff3c5a}
+  .t-synth .bubble{background:#ff3c5a;color:#fff}
+  .t-synth .con{background:rgba(0,0,0,.25);border-top:1px solid rgba(255,79,216,.4)}
+  .t-synth .in{color:#36f9f6;font-weight:700}.t-synth .ok{color:#7dffb2}.t-synth .bad{color:#ff3c5a}.t-synth .caret{background:#36f9f6}
+
+  /* CYBER */
+  .t-cyber{background:#0b0c10;color:#e6e6e6;border:2px solid #fcee0a;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));border-radius:0}
+  .t-cyber .bar{background:#fcee0a;color:#0b0c10}
+  .t-cyber .dots i{background:#0b0c10!important}
+  .t-cyber .run{background:#0b0c10;color:#fcee0a;border-radius:0;letter-spacing:.1em;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+  .t-cyber .side{border-right:1px solid #2a2b33}
+  .t-cyber .side .h{color:#00f0ff;opacity:1}
+  .t-cyber .side .sel{background:#00f0ff;color:#0b0c10;border-radius:0;font-weight:700}
+  .t-cyber .k{color:#fcee0a}.t-cyber .s{color:#00f0ff}.t-cyber .n{color:#ff2a6d}.t-cyber .p{color:#8a8f98}.t-cyber .ty{color:#fcee0a}
+  .t-cyber .err{background:rgba(255,42,109,.18);box-shadow:inset 3px 0 #ff2a6d}
+  .t-cyber .bubble{background:#ff2a6d;color:#0b0c10;border-radius:0}
+  .t-cyber .con{border-top:2px solid #00f0ff;background:#101118}
+  .t-cyber .in{color:#fcee0a}.t-cyber .ok{color:#00f0ff}.t-cyber .bad{color:#ff2a6d}.t-cyber .caret{background:#fcee0a}
+
+  .cards .card-image{padding:12px;background:#ddd}
+  .cards .card-image.dark{background:#111}
+</style>
+
+<h2>Rozložení okna a vzhledová témata</h2>
+<p class="subtitle">Nahoře je rozložení okna ve dvou situacích. Dole jsou čtyři návrhy témat. Témata, která se ti líbí, můžeš označit kliknutím, klidně víc najednou.</p>
+
+<h3>1 · Rozložení: vlevo soubory, uprostřed editor, dole konzole programu</h3>
+<p class="subtitle">Vlevo program běží a čeká na vstup, který se píše rovnou do konzole dole. Vpravo je chyba při překladu: řádek se zvýrazní a vedle něj se objeví anglická hláška kompilátoru.</p>
+<div class="split">
+  <div class="wall-glass">
+    <div class="ide t-glass">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">soucet.cpp</span><span class="run">▶ Run</span></div>
+      <div class="main">
+        <div class="side"><div class="h">ukoly</div><div class="f">📁 domaci</div><div class="f sel">📄 soucet.cpp</div><div class="f">📄 prumer.cpp</div><div class="f">📄 hadani.cpp</div></div>
+        <div class="right">
+          <div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="k">using namespace</span> std;</div>
+<div><span class="ln">3</span></div>
+<div><span class="ln">4</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">5</span>    <span class="ty">int</span> a, b;</div>
+<div><span class="ln">6</span>    cout &lt;&lt; <span class="s">"Zadej dve cisla: "</span>;</div>
+<div><span class="ln">7</span>    cin &gt;&gt; a &gt;&gt; b;</div>
+<div><span class="ln">8</span>    cout &lt;&lt; <span class="s">"Soucet je "</span> &lt;&lt; a + b &lt;&lt; endl;</div>
+<div><span class="ln">9</span>    <span class="k">return</span> <span class="n">0</span>;</div>
+<div><span class="ln">10</span>}</div>
+          </div>
+          <div class="con"><div class="h">Konzole</div>Zadej dve cisla: <span class="in">5 7</span><br>Soucet je 12<br><span class="ok">✓ Program skončil</span> <span class="caret"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wall-glass">
+    <div class="ide t-glass">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">soucet.cpp</span><span class="run">▶ Run</span></div>
+      <div class="main">
+        <div class="side"><div class="h">ukoly</div><div class="f">📁 domaci</div><div class="f sel">📄 soucet.cpp</div><div class="f">📄 prumer.cpp</div><div class="f">📄 hadani.cpp</div></div>
+        <div class="right">
+          <div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="k">using namespace</span> std;</div>
+<div><span class="ln">3</span></div>
+<div><span class="ln">4</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">5</span>    <span class="ty">int</span> a, b;</div>
+<div><span class="ln">6</span>    cout &lt;&lt; <span class="s">"Zadej dve cisla: "</span>;</div>
+<div class="err"><span class="ln">7</span>    cin &gt;&gt; a &gt;&gt; b<span class="bubble">expected ';' after expression</span></div>
+<div><span class="ln">8</span>    cout &lt;&lt; <span class="s">"Soucet je "</span> &lt;&lt; a + b &lt;&lt; endl;</div>
+<div><span class="ln">9</span>    <span class="k">return</span> <span class="n">0</span>;</div>
+<div><span class="ln">10</span>}</div>
+          </div>
+          <div class="con"><div class="h">Konzole</div><span class="bad">✗ Překlad se nepovedl, 1 chyba</span><br>soucet.cpp, řádek 7: expected ';' after expression</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:32px">2 · Témata (můžeš jich vybrat víc)</h3>
+<div class="cards" data-multiselect>
+  <div class="card" data-choice="glass" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="wall-glass" style="padding:14px">
+      <div class="ide t-glass">
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">hadani.cpp</span><span class="run">▶ Run</span></div>
+        <div class="main" style="height:200px">
+          <div class="side" style="width:110px"><div class="h">ukoly</div><div class="f sel">📄 hadani.cpp</div><div class="f">📄 soucet.cpp</div></div>
+          <div class="right"><div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">3</span>  <span class="ty">int</span> tip = <span class="n">0</span>;</div>
+<div><span class="ln">4</span>  <span class="k">while</span> (tip != <span class="n">42</span>) {</div>
+<div><span class="ln">5</span>    std::cin &gt;&gt; tip;</div>
+          </div><div class="con" style="height:56px">Hadej: <span class="in">42</span><br><span class="ok">✓ Trefa!</span></div></div>
+        </div>
+      </div></div></div>
+    <div class="card-body"><h3>Glass</h3><p>Čisté světlé téma ve stylu macOS. Liquid glass, průsvitné panely, barvy jako v Xcode. Výchozí vzhled.</p></div>
+  </div>
+
+  <div class="card" data-choice="hacker" onclick="toggleSelect(this)">
+    <div class="card-image dark">
+      <div class="ide t-hacker">
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">root@cecko:~/ukoly/hadani.cpp</span><span class="run">[ RUN ]</span></div>
+        <div class="main" style="height:200px">
+          <div class="side" style="width:110px"><div class="h">&gt; ls ./ukoly</div><div class="f sel">hadani.cpp</div><div class="f">soucet.cpp</div></div>
+          <div class="right"><div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">3</span>  <span class="ty">int</span> tip = <span class="n">0</span>;</div>
+<div><span class="ln">4</span>  <span class="k">while</span> (tip != <span class="n">42</span>) {</div>
+<div><span class="ln">5</span>    std::cin &gt;&gt; tip;</div>
+          </div><div class="con" style="height:56px">&gt; Hadej: <span class="in">42</span><br><span class="ok">ACCESS GRANTED_</span></div></div>
+        </div>
+      </div></div>
+    <div class="card-body"><h3>Hacker</h3><p>Černá obrazovka se zeleným fosforovým písmem, jemné řádkování jako starý monitor a hláška „ACCESS GRANTED“ po úspěšném běhu.</p></div>
+  </div>
+
+  <div class="card" data-choice="synthwave" onclick="toggleSelect(this)">
+    <div class="card-image dark">
+      <div class="ide t-synth">
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">hadani.cpp</span><span class="run">▶ RUN</span></div>
+        <div class="main" style="height:200px">
+          <div class="side" style="width:110px"><div class="h">ukoly</div><div class="f sel">hadani.cpp</div><div class="f">soucet.cpp</div></div>
+          <div class="right"><div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">3</span>  <span class="ty">int</span> tip = <span class="n">0</span>;</div>
+<div><span class="ln">4</span>  <span class="k">while</span> (tip != <span class="n">42</span>) {</div>
+<div><span class="ln">5</span>    std::cin &gt;&gt; tip;</div>
+          </div><div class="con" style="height:56px">Hadej: <span class="in">42</span><br><span class="ok">✓ Trefa!</span></div></div>
+        </div>
+      </div></div>
+    <div class="card-body"><h3>Synthwave</h3><p>Retro styl 80. let: neonově růžová a tyrkysová, fialový soumrak a zářící tlačítko Run.</p></div>
+  </div>
+
+  <div class="card" data-choice="cyber" onclick="toggleSelect(this)">
+    <div class="card-image dark">
+      <div class="ide t-cyber">
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="title">// HADANI.CPP</span><span class="run">RUN ▶</span></div>
+        <div class="main" style="height:200px">
+          <div class="side" style="width:110px"><div class="h">// UKOLY</div><div class="f sel">hadani.cpp</div><div class="f">soucet.cpp</div></div>
+          <div class="right"><div class="code">
+<div><span class="ln">1</span><span class="p">#include &lt;iostream&gt;</span></div>
+<div><span class="ln">2</span><span class="ty">int</span> main() {</div>
+<div><span class="ln">3</span>  <span class="ty">int</span> tip = <span class="n">0</span>;</div>
+<div><span class="ln">4</span>  <span class="k">while</span> (tip != <span class="n">42</span>) {</div>
+<div><span class="ln">5</span>    std::cin &gt;&gt; tip;</div>
+          </div><div class="con" style="height:56px">Hadej: <span class="in">42</span><br><span class="ok">// MISSION COMPLETE</span></div></div>
+        </div>
+      </div></div>
+    <div class="card-body"><h3>Cyberpunk</h3><p>Ostrá žlutá a tyrkysová na černé, useknuté rohy a prvky jako z obrazovky ve sci-fi hře.</p></div>
+  </div>
+</div>

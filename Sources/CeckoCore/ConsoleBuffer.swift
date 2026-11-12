@@ -1,6 +1,9 @@
 import Foundation
 
-public enum ConsoleSegmentKind: Sendable {
+public enum ConsoleSegmentKind: Equatable, Sendable {
+    /// A compiler message; `line` is the line in the open file it points to,
+    /// so the console can jump there (nil: no line, e.g. a linker error).
+    case diagnostic(severity: Severity, line: Int?)
     /// What the program printed.
     case output
     /// What the student typed.

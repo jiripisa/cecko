@@ -5,13 +5,13 @@
     <link>https://jiripisa.github.io/cecko/</link>
     <description>Cecko updates</description>
     <item>
-      <title>Cecko 0.1.1</title>
-      <sparkle:version>0.1.1</sparkle:version>
-      <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+      <title>Cecko 0.8.0</title>
+      <sparkle:version>0.8.0</sparkle:version>
+      <sparkle:shortVersionString>0.8.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>27.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 12 Nov 2026 11:52:23 +0000</pubDate>
-      <description><![CDATA[<ul><li>Files from Windows with unusual bytes keep every byte when saved.</li><li>Linker warnings no longer count as compile errors.</li><li><code>.c</code> files are compiled as C, so valid C code that isn&#x27;t valid C++ runs.</li><li>Several messages on one line show as one bubble with &quot;+N&quot;; long messages are shortened to fit.</li><li>Moving the open file to the Trash keeps your last edits.</li><li>After a program ends, typing goes back to the editor.</li><li>No focus ring around the theme and Run buttons.</li><li>New app icon.</li></ul>]]></description>
-      <enclosure url="https://github.com/jiripisa/cecko/releases/download/v0.1.1/Cecko-0.1.1.dmg" type="application/octet-stream" sparkle:edSignature="evMc3FtxvPqYbtv6o+9ATFDHGF0H/kLkYhPgjwIifEHhnEIihzkqL22aLZtGhAfd1K2LMQpLL6KDGlt+wobxDw==" length="3186615"/>
+      <pubDate>Thu, 12 Nov 2026 13:19:32 +0000</pubDate>
+      <description><![CDATA[<ul><li>Right-click › Insert in the editor adds common constructs: for, for over all items, while and do-while loops; if, if-else, if – else if – else and switch; a function, reading input and printing output. The part to fill in is selected.</li><li>App icon without the light edge around the tile.</li></ul>]]></description>
+      <enclosure url="https://github.com/jiripisa/cecko/releases/download/v0.8.0/Cecko-0.8.0.dmg" type="application/octet-stream" sparkle:edSignature="/LfWmKitKrVvouxnL4D5/9kC+PyjaMI8S+pAMyQh/LQiQ39XI6Ti/MkSBl7bZOkNvF9UCyIu2JI+cj8cXGxEDw==" length="2227096"/>
     </item>
   </channel>
 </rss>

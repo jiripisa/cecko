@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-11-12
 
 - Editor for C++ files with syntax highlighting, line numbers, auto-indent and bracket pairing; find and replace with ⌘F.
 - Explorer showing the chosen root folder; new file (with a `main` skeleton), new folder, rename, move to Trash; changes on disk appear on their own.

@@ -88,6 +88,7 @@ struct CodeEditor: NSViewRepresentable {
         textView.string = document.text
         textView.undoManager?.removeAllActions()
         textView.highlightsSyntax = document.isHighlighted
+        textView.isCFile = document.url.pathExtension.lowercased() == "c"
         textView.rehighlight()
         textView.setSelectedRange(NSRange(location: 0, length: 0))
         textView.scrollToBeginningOfDocument(nil)

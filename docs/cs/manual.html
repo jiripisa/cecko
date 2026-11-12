@@ -37,6 +37,7 @@
         <li><a href="#start">Začínáme</a></li>
         <li><a href="#window">Hlavní okno</a></li>
         <li><a href="#run">Spuštění programu</a></li>
+        <li><a href="#insert">Vkládání cyklů a podmínek</a></li>
         <li><a href="#errors">Chyby při překladu</a></li>
         <li><a href="#files">Soubory a složky</a></li>
         <li><a href="#themes">Vzhledy</a></li>
@@ -91,6 +92,17 @@
         <p>Klikni na <b>Run</b> nebo stiskni <kbd>⌘</kbd><kbd>R</kbd>. Cecko soubor uloží, přeloží ho kompilátorem C++ na tvém Macu a spustí v konzoli. Každý soubor <code>.cpp</code> je samostatný program a potřebuje vlastní <code>main</code>.</p>
         <p>Když program čte vstup (<code>cin</code>, <code>scanf</code>), objeví se dole v konzoli řádek pro vstup. Napiš hodnotu a stiskni Enter. <kbd>⌃</kbd><kbd>D</kbd> ukončí vstup, stejně jako v Terminálu.</p>
         <p><b>Stop</b> (<kbd>⌘</kbd><kbd>.</kbd>) ukončí program, který se zasekl nebo běží donekonečna. Na konci konzole napíše, jak program skončil: normálně, s jiným návratovým kódem než 0, nebo pádem, třeba <em>segmentation fault</em>.</p>
+      </section>
+
+      <section id="insert">
+        <h2>Vkládání cyklů a podmínek</h2>
+        <p>Klikni v editoru pravým tlačítkem a zvol <span class="ui">Vložit</span>. Konstrukce se vloží tam, kam jsi klikl, se správným odsazením, a část, kterou obvykle měníš jako první (podmínka, počet opakování, název), je už označená, takže ji rovnou přepíšeš.</p>
+        <ul>
+          <li><b>Cykly:</b> <code>for</code>, <code>for</code> přes všechny prvky kontejneru, <code>while</code>, <code>do-while</code>.</li>
+          <li><b>Podmínky:</b> <code>if</code>, <code>if-else</code>, <code>if – else if – else</code>, <code>switch</code>.</li>
+          <li><b>Další:</b> funkce, načtení vstupu (<code>cin</code>), výpis výstupu (<code>cout</code>). V souborech <code>.c</code> se místo nich použije <code>scanf</code> a <code>printf</code>.</li>
+        </ul>
+        <p>Když klikneš doprostřed řádku, konstrukce se vloží na vlastní řádky. <kbd>⌘</kbd><kbd>Z</kbd> vložení vrátí.</p>
       </section>
 
       <section id="errors">

@@ -37,6 +37,7 @@
         <li><a href="#start">Getting started</a></li>
         <li><a href="#window">The main window</a></li>
         <li><a href="#run">Running a program</a></li>
+        <li><a href="#insert">Inserting loops and conditions</a></li>
         <li><a href="#errors">Compile errors</a></li>
         <li><a href="#files">Files and folders</a></li>
         <li><a href="#themes">Themes</a></li>
@@ -91,6 +92,17 @@
         <p>Click <b>Run</b> or press <kbd>⌘</kbd><kbd>R</kbd>. Cecko saves the file, compiles it with the C++ compiler on your Mac and starts it in the console. Each <code>.cpp</code> file is its own program and needs its own <code>main</code>.</p>
         <p>When the program reads input (<code>cin</code>, <code>scanf</code>), an input line appears at the bottom of the console. Type the value and press Enter. <kbd>⌃</kbd><kbd>D</kbd> ends the input, as in Terminal.</p>
         <p><b>Stop</b> (<kbd>⌘</kbd><kbd>.</kbd>) ends a program that hangs or loops forever. At the end the console says how the program finished: normally, with an exit code other than 0, or with a crash such as <em>segmentation fault</em>.</p>
+      </section>
+
+      <section id="insert">
+        <h2>Inserting loops and conditions</h2>
+        <p>Right-click in the editor and choose <span class="ui">Insert</span>. The construct goes where you clicked, indented to fit, and the part you usually change next (the condition, the number of repeats, a name) is already selected, so you can type over it right away.</p>
+        <ul>
+          <li><b>Loops:</b> <code>for</code>, <code>for</code> over all items of a container, <code>while</code>, <code>do-while</code>.</li>
+          <li><b>Conditions:</b> <code>if</code>, <code>if-else</code>, <code>if – else if – else</code>, <code>switch</code>.</li>
+          <li><b>Other:</b> a function, reading input (<code>cin</code>), printing output (<code>cout</code>). In <code>.c</code> files these use <code>scanf</code> and <code>printf</code>.</li>
+        </ul>
+        <p>If you right-click in the middle of a line, the construct goes onto lines of its own. <kbd>⌘</kbd><kbd>Z</kbd> takes it back.</p>
       </section>
 
       <section id="errors">

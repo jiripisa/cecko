@@ -9,6 +9,8 @@ final class CodeTextView: NSTextView {
     var colors: ThemeColors?
     var highlightsSyntax = true
     var glow = false
+    /// The open file is plain C: snippets use printf/scanf.
+    var isCFile = false
     /// Errors and warnings of the last compile for this file (with lines).
     var diagnostics: [Diagnostic] = [] {
         didSet { needsDisplay = true }
@@ -113,6 +115,68 @@ final class CodeTextView: NSTextView {
         let start = selectedRange().location
         super.insertText(text, replacementRange: selectedRange())
         setSelectedRange(NSRange(location: start + offset, length: 0))
+    }
+
+    // MARK: Snippets (right-click › Insert)
+
+    override func menu(for event: NSEvent) -> NSMenu? {
+        let menu = super.menu(for: event) ?? NSMenu()
+        guard highlightsSyntax else { return menu }
+
+        // Insert where the student right-clicked, unless they clicked into a selection.
+        let point = convert(event.locationInWindow, from: nil)
+        let index = characterIndexForInsertion(at: point)
+        let selection = selectedRange()
+        if selection.length == 0 || !NSLocationInRange(index, selection) {
+            setSelectedRange(NSRange(location: index, length: 0))
+        }
+
+        let insert = NSMenuItem(title: String(localized: "Insert"), action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        var lastGroup: Snippet.Group?
+        for snippet in Snippet.all(forC: isCFile) {
+            if let lastGroup, lastGroup != snippet.group { submenu.addItem(.separator()) }
+            lastGroup = snippet.group
+            let item = NSMenuItem(title: Self.localizedTitle(snippet), action: #selector(insertSnippet(_:)),
+                                  keyEquivalent: "")
+            item.target = self
+            item.representedObject = snippet.id
+            item.toolTip = snippet.template.replacingOccurrences(of: "{{", with: "")
+                .replacingOccurrences(of: "}}", with: "")
+            submenu.addItem(item)
+        }
+        insert.submenu = submenu
+        menu.insertItem(insert, at: 0)
+        menu.insertItem(.separator(), at: 1)
+        return menu
+    }
+
+    @objc private func insertSnippet(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String,
+              let snippet = Snippet.all(forC: isCFile).first(where: { $0.id == id }) else { return }
+        let edit = snippet.edit(in: string, selection: selectedRange())
+        // insertText keeps undo working and notifies the delegate (autosave, highlighting).
+        super.insertText(edit.replacement, replacementRange: edit.range)
+        setSelectedRange(NSRange(location: edit.range.location + edit.selection.location,
+                                 length: edit.selection.length))
+        window?.makeFirstResponder(self)
+    }
+
+    private static func localizedTitle(_ snippet: Snippet) -> String {
+        switch snippet.id {
+        case "for": String(localized: "for loop")
+        case "forEach": String(localized: "for loop over all items")
+        case "while": String(localized: "while loop")
+        case "doWhile": String(localized: "do-while loop")
+        case "if": String(localized: "if")
+        case "ifElse": String(localized: "if-else")
+        case "ifElseIf": String(localized: "if – else if – else")
+        case "switch": String(localized: "switch")
+        case "function": String(localized: "Function")
+        case "read": String(localized: "Read input")
+        case "print": String(localized: "Print output")
+        default: snippet.title
+        }
     }
 
     // MARK: Lines

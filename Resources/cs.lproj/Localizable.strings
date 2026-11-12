@@ -49,3 +49,15 @@
 "Keep Editing" = "Pokračovat v úpravách";
 "Discard Changes" = "Zahodit změny";
 "Changes can't be saved: %@" = "Změny nejde uložit: %@";
+"Insert" = "Vložit";
+"for loop" = "Cyklus for";
+"for loop over all items" = "Cyklus for přes všechny prvky";
+"while loop" = "Cyklus while";
+"do-while loop" = "Cyklus do-while";
+"if" = "Podmínka if";
+"if-else" = "Podmínka if-else";
+"if – else if – else" = "Podmínka if – else if – else";
+"switch" = "Větvení switch";
+"Function" = "Funkce";
+"Read input" = "Načíst vstup";
+"Print output" = "Vypsat výstup";

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Right-click › Insert in the editor adds common constructs: for, for over all items, while and do-while loops; if, if-else, if – else if – else and switch; a function, reading input and printing output. The part to fill in is selected.
+
 ## 0.1.1 — 2026-11-12
 
 - Files from Windows with unusual bytes keep every byte when saved.

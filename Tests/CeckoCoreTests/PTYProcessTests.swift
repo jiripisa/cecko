@@ -106,4 +106,16 @@ struct PTYProcessTests {
         #expect(await r.wait { r.termination != nil })
         #expect(r.output == "x\nkonec\n")
     }
+
+    @Test("Input sent after the program ended is ignored safely")
+    func sendAfterExitIsIgnored() async throws {
+        let p = shell("exit 0")
+        let r = ProcessRecorder()
+        try r.start(p)
+        #expect(await r.wait { r.termination != nil })
+        try await Task.sleep(for: .milliseconds(700))   // past the reader's drain timeout
+        p.send("late\n")
+        p.sendEOF()
+        #expect(!p.isRunning)
+    }
 }

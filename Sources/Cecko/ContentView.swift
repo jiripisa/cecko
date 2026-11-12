@@ -58,7 +58,8 @@ struct ContentView: View {
                 editorArea
             }
         } console: {
-            ConsoleView(run: workspace.run) { workspace.reveal(line: $0) }
+            ConsoleView(run: workspace.run, onJumpToLine: { workspace.reveal(line: $0) },
+                        onRunEnded: { workspace.focusEditor() })
                 .themedPanel(theme)
         }
         .background(ThemedBackground(area: .editor))
@@ -68,7 +69,8 @@ struct ContentView: View {
         if let doc = workspace.document {
             CodeEditor(document: doc, theme: theme,
                        diagnostics: workspace.run.diagnosticsFile == doc.url ? workspace.run.diagnostics : [],
-                       lineToReveal: workspace.lineToReveal) { workspace.run.clearDiagnostics() }
+                       lineToReveal: workspace.lineToReveal,
+                       focusRequest: workspace.editorFocusRequest) { workspace.run.clearDiagnostics() }
                 .background(ThemedBackground(area: .editor))
                 .themedPanel(theme)
                 .id(ObjectIdentifier(doc))
@@ -109,6 +111,7 @@ struct ContentView: View {
             } label: {
                 Label(String(localized: "Theme"), systemImage: "paintpalette")
             }
+            .focusEffectDisabled()
             .help(String(localized: "Theme"))
         }
         if workspace.rootURL != nil {
@@ -150,6 +153,7 @@ struct RunButton: View {
             }
         }
         .disabled(!isRunning && (!workspace.canRun || run.state == .compiling))
+        .focusEffectDisabled()
         .help(helpText)
     }
 

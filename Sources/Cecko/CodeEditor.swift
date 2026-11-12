@@ -9,6 +9,7 @@ struct CodeEditor: NSViewRepresentable {
     let theme: ThemeContext
     let diagnostics: [Diagnostic]
     let lineToReveal: (line: Int, id: UUID)?
+    let focusRequest: UUID
     /// Called when the student edits; compile errors no longer match the text.
     let onEdit: () -> Void
 
@@ -66,6 +67,11 @@ struct CodeEditor: NSViewRepresentable {
         if textView.diagnostics != diagnostics.filter({ $0.line != nil }) {
             textView.diagnostics = diagnostics.filter { $0.line != nil }
         }
+        if coordinator.focusRequest != focusRequest {
+            let first = coordinator.focusRequest == nil
+            coordinator.focusRequest = focusRequest
+            if !first { DispatchQueue.main.async { textView.window?.makeFirstResponder(textView) } }
+        }
         if let request = lineToReveal, request.id != coordinator.revealedID {
             coordinator.revealedID = request.id
             DispatchQueue.main.async { textView.reveal(line: request.line) }
@@ -113,6 +119,7 @@ struct CodeEditor: NSViewRepresentable {
         var reloadToken = -1
         var themeKey = ""
         var revealedID: UUID?
+        var focusRequest: UUID?
         var isLoading = false
 
         init(_ parent: CodeEditor) { self.parent = parent }

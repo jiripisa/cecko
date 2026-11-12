@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Files from Windows with unusual bytes keep every byte when saved.
+- Linker warnings no longer count as compile errors.
+- `.c` files are compiled as C, so valid C code that isn't valid C++ runs.
+- Several messages on one line show as one bubble with "+N"; long messages are shortened to fit.
+- Moving the open file to the Trash keeps your last edits.
+- After a program ends, typing goes back to the editor.
+- No focus ring around the theme and Run buttons.
+- New app icon.
+
 ## 0.1.0 — 2026-11-12
 
 - Editor for C++ files with syntax highlighting, line numbers, auto-indent and bracket pairing; find and replace with ⌘F.

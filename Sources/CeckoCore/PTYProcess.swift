@@ -102,11 +102,13 @@ public final class PTYProcess: @unchecked Sendable {
         }
         source.setCancelHandler {
             if let rest = self.flushPending() { onOutput(rest) }
-            close(master)
+            // No new writes may pick up the descriptor from now on; writes
+            // already queued run before the close, so none can hit a reused fd.
             self.lock.withLock {
                 self.masterFD = -1
                 self.readSource = nil
             }
+            self.writeQueue.async { close(master) }
             finished.leave()
         }
         lock.withLock { readSource = source }

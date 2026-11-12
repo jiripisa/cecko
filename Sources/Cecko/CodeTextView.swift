@@ -154,8 +154,13 @@ final class CodeTextView: NSTextView {
         guard let colors, let layoutManager, let textContainer else { return }
         let ns = string as NSString
 
-        for d in diagnostics {
-            guard let line = d.line, let lineRect = self.rect(forLine: line) else { continue }
+        // One highlight and one bubble per line: errors win over warnings,
+        // further messages on the same line show as "+N".
+        let byLine = Dictionary(grouping: diagnostics.filter { $0.line != nil }, by: { $0.line! })
+        for (line, list) in byLine {
+            guard let lineRect = self.rect(forLine: line) else { continue }
+            let sorted = list.sorted { ($0.severity == .error ? 0 : 1) < ($1.severity == .error ? 0 : 1) }
+            let d = sorted[0]
             let isError = d.severity == .error
             (isError ? colors.errorLine : colors.warningLine).nsColor.setFill()
             lineRect.fill()
@@ -175,21 +180,32 @@ final class CodeTextView: NSTextView {
                     textEnd = max(textEnd, textContainerOrigin.x + used.maxX)
                 }
             }
-            drawBubble(d.message, x: textEnd + 18, lineRect: lineRect,
+            let message = sorted.count > 1 ? d.message + "  +\(sorted.count - 1)" : d.message
+            drawBubble(message, x: textEnd + 18, lineRect: lineRect,
+                       maxX: visibleRect.maxX - 8,
                        fill: (isError ? colors.errorBubble : colors.warningBubble).nsColor,
                        text: isError ? .white : .black)
         }
     }
 
-    private func drawBubble(_ message: String, x: CGFloat, lineRect: NSRect, fill: NSColor, text: NSColor) {
+    /// Draws the message in a rounded bubble from `x`, shortened with "…"
+    /// so it ends before `maxX` (the visible edge of the editor).
+    private func drawBubble(_ message: String, x: CGFloat, lineRect: NSRect, maxX: CGFloat,
+                            fill: NSColor, text: NSColor) {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.lineBreakMode = .byTruncatingTail
         let font = NSFont.systemFont(ofSize: 11, weight: .semibold)
-        let attributed = NSAttributedString(string: message, attributes: [.font: font, .foregroundColor: text])
+        let attributed = NSAttributedString(string: message, attributes: [
+            .font: font, .foregroundColor: text, .paragraphStyle: paragraph])
         let size = attributed.size()
+        let width = min(size.width, max(maxX - x - 14, 40))
         let height = min(lineRect.height - 2, size.height + 2)
-        let bubble = NSRect(x: x, y: lineRect.midY - height / 2, width: size.width + 14, height: height)
+        let bubble = NSRect(x: x, y: lineRect.midY - height / 2, width: width + 14, height: height)
         fill.setFill()
         NSBezierPath(roundedRect: bubble, xRadius: 5, yRadius: 5).fill()
-        attributed.draw(at: NSPoint(x: bubble.minX + 7, y: bubble.midY - size.height / 2))
+        attributed.draw(with: NSRect(x: bubble.minX + 7, y: bubble.midY - size.height / 2,
+                                     width: width, height: size.height),
+                        options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine])
     }
 
     private func characterIndex(ofLine line: Int, in ns: NSString) -> Int? {

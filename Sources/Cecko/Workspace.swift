@@ -22,6 +22,8 @@ final class Workspace {
     private(set) var compilerStatus: CompilerStatus?
     /// A request for the editor to show a line; the id makes repeats distinct.
     private(set) var lineToReveal: (line: Int, id: UUID)?
+    /// Changes when the editor should take keyboard focus (a run ended).
+    private(set) var editorFocusRequest = UUID()
     private(set) var toolchain: Toolchain?
 
     let run = RunController()
@@ -165,6 +167,10 @@ final class Workspace {
         UserDefaults.standard.removeObject(forKey: Keys.lastFile)
     }
 
+    func focusEditor() {
+        editorFocusRequest = UUID()
+    }
+
     /// Shows a line of the file the last compile was about, opening that
     /// file first if another one is open.
     func reveal(line: Int) {
@@ -238,6 +244,8 @@ final class Workspace {
 
     func moveToTrash(_ url: URL) {
         let affectsOpen = document.map { $0.url == url.standardizedFileURL || $0.url.path.hasPrefix(url.path + "/") } ?? false
+        // The copy in the Trash gets the last edits too.
+        if affectsOpen { document?.saveNow() }
         if perform({ try FileOperations.moveToTrash(url) }) != nil {
             if affectsOpen { closeDocument() }
             refresh()

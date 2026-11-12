@@ -1,6 +1,6 @@
 # Cecko — project notes for Claude
 
-A simple, good-looking C++ editor for students: write code, press Run, done.
+A simple C++ editor for students: write code, press Run, done.
 
 ## Code
 

@@ -1,3 +1,4 @@
+import AppKit
 import CeckoCore
 import SwiftUI
 
@@ -25,13 +26,14 @@ struct ContentView: View {
                 }
             }
         }
-        .environment(\.theme, theme)
         .fontDesign(theme.data.usesMonospacedUI ? .monospaced : .default)
         .tint(theme.isGlass ? nil : theme.colors.accent.color)
         .preferredColorScheme(theme.data.isDark == true ? .dark : nil)
         .navigationTitle(title)
         .navigationSubtitle(subtitle)
         .toolbar { toolbar }
+        // Last, so the toolbar items get the theme too.
+        .environment(\.theme, theme)
         .frame(minWidth: 820, minHeight: 520)
     }
 
@@ -45,18 +47,16 @@ struct ContentView: View {
     }
 
     private var detail: some View {
-        VStack(spacing: 0) {
-            if workspace.compilerStatus == .missing {
-                CompilerMissingView(workspace: workspace)
-            }
-            VSplitView {
+        EditorConsoleSplit {
+            VStack(spacing: 0) {
+                if workspace.compilerStatus == .missing {
+                    CompilerMissingView(workspace: workspace)
+                }
                 editorArea
-                    .frame(minHeight: 160, idealHeight: 520, maxHeight: .infinity)
-                    .layoutPriority(1)
-                ConsoleView(run: workspace.run) { workspace.reveal(line: $0) }
-                    .frame(minHeight: 90, idealHeight: 200, maxHeight: .infinity)
-                    .themedPanel(theme)
             }
+        } console: {
+            ConsoleView(run: workspace.run) { workspace.reveal(line: $0) }
+                .themedPanel(theme)
         }
         .background(ThemedBackground(area: .editor))
     }
@@ -214,5 +214,56 @@ private struct Parallelogram: Shape {
             p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
             p.closeSubpath()
         }
+    }
+}
+
+/// Editor above, console below, with a draggable divider. The console's
+/// height is remembered; the editor always keeps at least 160 points.
+struct EditorConsoleSplit<Editor: View, Console: View>: View {
+
+    @ViewBuilder let editor: Editor
+    @ViewBuilder let console: Console
+
+    @AppStorage("consoleHeight") private var consoleHeight: Double = 220
+    @State private var dragStart: Double?
+    @Environment(\.theme) private var theme
+
+    private let minConsole: Double = 90
+    private let minEditor: Double = 160
+
+    var body: some View {
+        GeometryReader { geo in
+            let maxConsole = max(minConsole, geo.size.height - minEditor)
+            let height = min(max(consoleHeight, minConsole), maxConsole)
+            VStack(spacing: 0) {
+                editor
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                divider(maxConsole: maxConsole, current: height)
+                console
+                    .frame(height: height)
+            }
+        }
+    }
+
+    private func divider(maxConsole: Double, current: Double) -> some View {
+        Rectangle()
+            .fill(theme.isGlass ? Color(nsColor: .separatorColor) : theme.colors.accent.color.opacity(0.35))
+            .frame(height: 1)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 3)
+            .contentShape(Rectangle())
+            .onHover { inside in
+                if inside { NSCursor.resizeUpDown.push() } else { NSCursor.pop() }
+            }
+            .gesture(
+                DragGesture(minimumDistance: 1, coordinateSpace: .global)
+                    .onChanged { value in
+                        let start = dragStart ?? current
+                        dragStart = start
+                        consoleHeight = min(max(start - value.translation.height, minConsole), maxConsole)
+                    }
+                    .onEnded { _ in dragStart = nil }
+            )
+            .accessibilityHidden(true)
     }
 }

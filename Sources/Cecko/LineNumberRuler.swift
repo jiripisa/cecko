@@ -13,6 +13,7 @@ final class LineNumberRuler: NSRulerView {
         super.init(scrollView: textView.enclosingScrollView, orientation: .verticalRuler)
         clientView = textView
         ruleThickness = 44
+        clipsToBounds = true
         NotificationCenter.default.addObserver(self, selector: #selector(refresh),
                                                name: NSText.didChangeNotification, object: textView)
     }
@@ -21,9 +22,14 @@ final class LineNumberRuler: NSRulerView {
 
     @objc private func refresh() { needsDisplay = true }
 
-    override func drawHashMarksAndLabels(in rect: NSRect) {
+    override func draw(_ dirtyRect: NSRect) {
+        // Views don't clip by default (macOS 14+): never paint outside the ruler.
         background.setFill()
-        bounds.fill()
+        bounds.intersection(dirtyRect).fill()
+        drawHashMarksAndLabels(in: dirtyRect)
+    }
+
+    override func drawHashMarksAndLabels(in rect: NSRect) {
         guard let textView, let layoutManager = textView.layoutManager,
               let container = textView.textContainer else { return }
 

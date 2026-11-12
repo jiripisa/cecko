@@ -19,7 +19,8 @@ struct CompilerMissingView: View {
                 Text("To run programs, Cecko needs Apple's free developer tools (Command Line Tools). Click Install, confirm the dialog and wait until the download finishes (a few minutes). Then click Check Again.")
                     .font(theme.uiFont(.callout))
                     .foregroundStyle(theme.isGlass ? Color.secondary : theme.colors.secondaryText.color)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(4)
+                    .frame(maxWidth: 640, alignment: .leading)
                 HStack(spacing: 10) {
                     ThemedActionButton(title: String(localized: "Install Developer Tools"), systemImage: "arrow.down.circle") {
                         Toolchain.installCommandLineTools()
@@ -32,7 +33,9 @@ struct CompilerMissingView: View {
             Spacer(minLength: 0)
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(theme.colors.errorLine.color)
+        .background(theme.colors.editorBackground.color)
         .clipShape(RoundedRectangle(cornerRadius: theme.isGlass ? 14 : 0))
         .padding(10)
     }

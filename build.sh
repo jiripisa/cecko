@@ -60,6 +60,11 @@ cp "$SPM_BUILD_DIR/$SPM_CONFIG/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/"
 # Copy Info.plist
 cp "Resources/Info.plist" "$APP_BUNDLE/Contents/"
 
+# Copy localizations (en, cs)
+for LPROJ in Resources/*.lproj; do
+    cp -R "$LPROJ" "$APP_BUNDLE/Contents/Resources/"
+done
+
 # Embed Sparkle (auto-update). The app is unsandboxed, so the XPC services
 # (only needed by sandboxed apps) are left out.
 SPARKLE_SRC=".build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"

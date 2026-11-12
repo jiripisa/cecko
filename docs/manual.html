@@ -27,8 +27,7 @@
 <main>
   <div class="wrap title">
     <h1>Manual</h1>
-    <p>Every control of Cecko 0.1.0, where to find it and what it does.
-    The frames in the screenshots mark the control the text talks about.</p>
+    <p>Every control of Cecko 0.1.0, where to find it and what it does. The frames in the screenshots mark the control the text talks about.</p>
   </div>
 
   <div class="wrap layout">
@@ -37,6 +36,13 @@
       <ol>
         <li><a href="#start">Getting started</a></li>
         <li><a href="#window">The main window</a></li>
+        <li><a href="#run">Running a program</a></li>
+        <li><a href="#errors">Compile errors</a></li>
+        <li><a href="#files">Files and folders</a></li>
+        <li><a href="#themes">Themes</a></li>
+        <li><a href="#command">The cecko command</a></li>
+        <li><a href="#compiler">If the compiler is missing</a></li>
+        <li><a href="#keys">Keyboard shortcuts</a></li>
         <li><a href="#updates">Updates</a></li>
       </ol>
     </nav>
@@ -45,29 +51,133 @@
       <section id="start">
         <h2>Getting started</h2>
         <ol>
-          <li>Download the disk image from the <a href="index.html#get">download page</a>
-          and open it.</li>
+          <li>Download the disk image from the <a href="index.html#get">download page</a> and open it.</li>
           <li>Drag <b>Cecko</b> to <b>Applications</b> and start it from there.</li>
+          <li>On the first launch, click <span class="ui">Choose Folder…</span> and pick the folder where you keep your C++ programs. Cecko calls it the <em>root folder</em>, shows its files on the left and opens it again next time.</li>
         </ol>
+        <p>To switch to another folder later, choose <span class="ui">File › Change Root Folder…</span>.</p>
       </section>
 
       <section id="window">
         <h2>The main window</h2>
-        <!-- FILL: one figure per area of the window. Marks use percentages of
-             the whole image; --iw/--ih are the screenshot's pixel size. -->
         <figure class="fig">
-          <div class="view" style="--iw:1400;--ih:800">
-            <img src="assets/cecko-window.png" alt="The Cecko window">
+          <div class="view" style="--iw:1400;--ih:916">
+            <img src="assets/cecko-window.png" alt="The Cecko window after running a program">
+            <span class="mark" style="--x:0.5;--y:7;--w:20.5;--h:88"><b>1</b></span>
+            <span class="mark" style="--x:21.5;--y:7.5;--w:78;--h:60.5"><b>2</b></span>
+            <span class="mark" style="--x:91.8;--y:1.3;--w:7.7;--h:5.2"><b>3</b></span>
+            <span class="mark" style="--x:86.8;--y:1.5;--w:5;--h:4.8"><b>4</b></span>
+            <span class="mark" style="--x:21.5;--y:69;--w:78;--h:30"><b>5</b></span>
           </div>
+          <figcaption>A program that printed a multiplication table.</figcaption>
         </figure>
-        <p>A simple, good-looking C++ editor for students: write code, press Run, done.</p>
+
+        <dl class="controls">
+          <dt><span class="n">1</span>Explorer</dt>
+          <dd>The files and folders of the root folder. Click a file to open it.</dd>
+          <dt><span class="n">2</span>Editor</dt>
+          <dd>The open file, with C++ syntax colours and line numbers. Enter keeps the indentation, brackets and quotes close themselves, <kbd>⌘</kbd><kbd>F</kbd> finds and replaces.</dd>
+          <dt><span class="n">3</span>Run</dt>
+          <dd>Compiles and starts the open program. While it runs, the button turns into <b>Stop</b>.</dd>
+          <dt><span class="n">4</span>Theme</dt>
+          <dd>Switches between the four looks (see <a href="#themes">Themes</a>).</dd>
+          <dt><span class="n">5</span>Console</dt>
+          <dd>What the program prints, what you type into it, and messages from the compiler. Drag the line above it to make it taller or shorter; the trash icon clears it.</dd>
+        </dl>
+      </section>
+
+      <section id="run">
+        <h2>Running a program</h2>
+        <p>Click <b>Run</b> or press <kbd>⌘</kbd><kbd>R</kbd>. Cecko saves the file, compiles it with the C++ compiler on your Mac and starts it in the console. Each <code>.cpp</code> file is its own program and needs its own <code>main</code>.</p>
+        <p>When the program reads input (<code>cin</code>, <code>scanf</code>), an input line appears at the bottom of the console. Type the value and press Enter. <kbd>⌃</kbd><kbd>D</kbd> ends the input, as in Terminal.</p>
+        <p><b>Stop</b> (<kbd>⌘</kbd><kbd>.</kbd>) ends a program that hangs or loops forever. At the end the console says how the program finished: normally, with an exit code other than 0, or with a crash such as <em>segmentation fault</em>.</p>
+      </section>
+
+      <section id="errors">
+        <h2>Compile errors</h2>
+        <figure class="fig">
+          <div class="view" style="--iw:1400;--ih:916">
+            <img src="assets/manual/error.png" alt="A missing semicolon on line 7">
+            <span class="mark" style="--x:24.5;--y:21.6;--w:31.5;--h:3.4"><b>1</b></span>
+            <span class="mark" style="--x:21.8;--y:73.8;--w:37;--h:6.4"><b>2</b></span>
+          </div>
+          <figcaption>A missing semicolon: the line is highlighted (1) and listed in the console (2).</figcaption>
+        </figure>
+
+        <p>If the program doesn't compile, the line with the mistake is highlighted and the compiler's message appears next to it (1). The messages are the compiler's own, in English. The console lists all of them (2); click one to jump to its line. Warnings are yellow and don't stop the program from running.</p>
+      </section>
+
+      <section id="files">
+        <h2>Files and folders</h2>
+        <p>There is no saving: Cecko writes your changes a second after you stop typing, and always before Run. <kbd>⌘</kbd><kbd>S</kbd> saves right away if you want to be sure.</p>
+        <ul>
+          <li><span class="ui">File › New File</span> (<kbd>⌘</kbd><kbd>N</kbd>) creates <code>program.cpp</code> with an empty <code>main</code> ready to fill in.</li>
+          <li><span class="ui">File › New Folder</span> (<kbd>⇧</kbd><kbd>⌘</kbd><kbd>N</kbd>) creates a folder. Both also sit at the bottom of the explorer.</li>
+          <li>Right-click a file or folder to rename it, show it in Finder or move it to the Trash.</li>
+          <li>Changes made in other apps show up on their own.</li>
+          <li>Files from Code::Blocks on Windows open with correct Czech characters and are saved back the same way; <code>#include &lt;bits/stdc++.h&gt;</code> works.</li>
+          <li>To open a <code>.cpp</code> file from Finder, choose <span class="ui">Open With › Cecko</span> or drag it onto Cecko in the Dock. Its folder becomes the root folder.</li>
+        </ul>
+      </section>
+
+      <section id="themes">
+        <h2>Themes</h2>
+        <p>Pick a look with the palette button in the toolbar or in <span class="ui">View › Theme</span>. Cecko remembers it. <b>Glass</b> is the default: clean, with Liquid Glass, light or dark following macOS.</p>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="assets/manual/theme-hacker.png" alt="Hacker">
+          </div>
+          <figcaption><b>Hacker</b>: green phosphor on black, scanlines, and ACCESS GRANTED when the program finishes.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="assets/manual/theme-synth.png" alt="Synthwave">
+          </div>
+          <figcaption><b>Synthwave</b>: neon 80s colours and a setting sun.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="assets/manual/theme-cyber.png" alt="Cyberpunk">
+          </div>
+          <figcaption><b>Cyberpunk</b>: sharp yellow and cyan with cut corners.</figcaption>
+        </figure>
+      </section>
+
+      <section id="command">
+        <h2>The cecko command</h2>
+        <p>Choose <span class="ui">Cecko › Install “cecko” Command…</span> and enter your Mac password. After that, typing <code>cecko .</code> in Terminal opens the current folder in Cecko, and <code>cecko hello.cpp</code> opens a file.</p>
+      </section>
+
+      <section id="compiler">
+        <h2>If the compiler is missing</h2>
+        <figure class="fig">
+          <div class="view" style="--iw:1400;--ih:916;--zx:20;--zy:0;--zw:80;--zh:42">
+            <img src="assets/manual/compiler-missing.png" alt="The banner shown when the compiler is missing">
+            <span class="mark" style="--x:21.5;--y:8;--w:77.5;--h:18"><b>1</b></span>
+          </div>
+          <figcaption>The banner above the editor (1).</figcaption>
+        </figure>
+
+        <p>Cecko uses Apple's free developer tools (Command Line Tools). If they are not installed, a banner appears above the editor and Run is unavailable. Click <span class="ui">Install Developer Tools</span>, confirm Apple's dialog and wait for the download (a few minutes). Then click <span class="ui">Check Again</span>.</p>
+      </section>
+
+      <section id="keys">
+        <h2>Keyboard shortcuts</h2>
+        <dl class="controls">
+          <dt><kbd>⌘</kbd><kbd>R</kbd></dt><dd>Run the open program</dd>
+          <dt><kbd>⌘</kbd><kbd>.</kbd></dt><dd>Stop the running program</dd>
+          <dt><kbd>⌃</kbd><kbd>D</kbd></dt><dd>End the program's input</dd>
+          <dt><kbd>⌘</kbd><kbd>K</kbd></dt><dd>Clear the console</dd>
+          <dt><kbd>⌘</kbd><kbd>F</kbd></dt><dd>Find and replace in the file</dd>
+          <dt><kbd>⌘</kbd><kbd>N</kbd> / <kbd>⇧</kbd><kbd>⌘</kbd><kbd>N</kbd></dt><dd>New file / new folder</dd>
+          <dt><kbd>⇧</kbd><kbd>⌘</kbd><kbd>O</kbd></dt><dd>Change the root folder</dd>
+          <dt><kbd>⌘</kbd><kbd>S</kbd></dt><dd>Save now</dd>
+        </dl>
       </section>
 
       <section id="updates">
         <h2>Updates</h2>
-        <p>At every launch Cecko asks whether a newer version exists and, if
-        so, offers it; nothing is installed without your OK. <span class="ui">Cecko
-        › Check for Updates…</span> asks right away.</p>
+        <p>At every launch Cecko asks whether a newer version exists and, if so, offers it; nothing is installed without your OK. <span class="ui">Cecko › Check for Updates…</span> asks right away.</p>
       </section>
     </article>
   </div>

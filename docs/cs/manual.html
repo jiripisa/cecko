@@ -27,8 +27,7 @@
 <main>
   <div class="wrap title">
     <h1>Manuál</h1>
-    <p>Každý ovládací prvek aplikace Cecko 0.1.0: kde ho najdete a co dělá.
-    Rámečky ve snímcích označují prvek, o kterém text mluví.</p>
+    <p>Každý ovládací prvek aplikace Cecko 0.1.0: kde ho najdeš a co dělá. Rámečky ve snímcích označují prvek, o kterém text mluví.</p>
   </div>
 
   <div class="wrap layout">
@@ -37,6 +36,13 @@
       <ol>
         <li><a href="#start">Začínáme</a></li>
         <li><a href="#window">Hlavní okno</a></li>
+        <li><a href="#run">Spuštění programu</a></li>
+        <li><a href="#errors">Chyby při překladu</a></li>
+        <li><a href="#files">Soubory a složky</a></li>
+        <li><a href="#themes">Vzhledy</a></li>
+        <li><a href="#command">Příkaz cecko</a></li>
+        <li><a href="#compiler">Když chybí kompilátor</a></li>
+        <li><a href="#keys">Klávesové zkratky</a></li>
         <li><a href="#updates">Aktualizace</a></li>
       </ol>
     </nav>
@@ -45,28 +51,133 @@
       <section id="start">
         <h2>Začínáme</h2>
         <ol>
-          <li>Stáhněte obraz disku ze <a href="index.html#get">stránky ke stažení</a>
-          a otevřete ho.</li>
-          <li>Přetáhněte <b>Cecko</b> do složky <b>Aplikace</b> a spusťte ji odtamtud.</li>
+          <li>Stáhni obraz disku ze <a href="index.html#get">stránky ke stažení</a> a otevři ho.</li>
+          <li>Přetáhni <b>Cecko</b> do složky <b>Aplikace</b> a spusť ho odtamtud.</li>
+          <li>Při prvním spuštění klikni na <span class="ui">Vybrat složku…</span> a vyber složku, ve které máš své programy v C++. Cecko jí říká <em>kořenová složka</em>, ukazuje její soubory vlevo a příště ji otevře znovu.</li>
         </ol>
+        <p>Jinou složku vybereš kdykoli v menu <span class="ui">Soubor › Změnit kořenovou složku…</span>.</p>
       </section>
 
       <section id="window">
         <h2>Hlavní okno</h2>
-        <!-- FILL: stejné obrázky a značky jako v anglické verzi, česky. -->
         <figure class="fig">
-          <div class="view" style="--iw:1400;--ih:800">
-            <img src="../assets/cecko-window.png" alt="Okno aplikace Cecko">
+          <div class="view" style="--iw:1400;--ih:916">
+            <img src="../assets/manual/window-cs.png" alt="Okno Cecka po spuštění programu">
+            <span class="mark" style="--x:0.5;--y:7;--w:20.5;--h:88"><b>1</b></span>
+            <span class="mark" style="--x:21.5;--y:7.5;--w:78;--h:60.5"><b>2</b></span>
+            <span class="mark" style="--x:91.8;--y:1.3;--w:7.7;--h:5.2"><b>3</b></span>
+            <span class="mark" style="--x:86.8;--y:1.5;--w:5;--h:4.8"><b>4</b></span>
+            <span class="mark" style="--x:21.5;--y:69;--w:78;--h:30"><b>5</b></span>
           </div>
+          <figcaption>Program, který vypsal tabulku násobilky.</figcaption>
         </figure>
-        <p>Jednoduchý a hezký editor C++ pro studenty: napiš kód, zmáčkni Run a hotovo.</p>
+
+        <dl class="controls">
+          <dt><span class="n">1</span>Průzkumník</dt>
+          <dd>Soubory a složky kořenové složky. Kliknutím soubor otevřeš.</dd>
+          <dt><span class="n">2</span>Editor</dt>
+          <dd>Otevřený soubor s barevným zvýrazněním C++ a čísly řádků. Enter zachová odsazení, závorky a uvozovky se uzavírají samy, <kbd>⌘</kbd><kbd>F</kbd> hledá a nahrazuje.</dd>
+          <dt><span class="n">3</span>Run</dt>
+          <dd>Přeloží a spustí otevřený program. Dokud program běží, tlačítko se mění na <b>Stop</b>.</dd>
+          <dt><span class="n">4</span>Vzhled</dt>
+          <dd>Přepíná mezi čtyřmi vzhledy (viz <a href="#themes">Vzhledy</a>).</dd>
+          <dt><span class="n">5</span>Konzole</dt>
+          <dd>Co program vypisuje, co do něj píšeš a hlášky kompilátoru. Tažením čáry nad ní ji zvětšíš nebo zmenšíš; ikonou koše ji vymažeš.</dd>
+        </dl>
+      </section>
+
+      <section id="run">
+        <h2>Spuštění programu</h2>
+        <p>Klikni na <b>Run</b> nebo stiskni <kbd>⌘</kbd><kbd>R</kbd>. Cecko soubor uloží, přeloží ho kompilátorem C++ na tvém Macu a spustí v konzoli. Každý soubor <code>.cpp</code> je samostatný program a potřebuje vlastní <code>main</code>.</p>
+        <p>Když program čte vstup (<code>cin</code>, <code>scanf</code>), objeví se dole v konzoli řádek pro vstup. Napiš hodnotu a stiskni Enter. <kbd>⌃</kbd><kbd>D</kbd> ukončí vstup, stejně jako v Terminálu.</p>
+        <p><b>Stop</b> (<kbd>⌘</kbd><kbd>.</kbd>) ukončí program, který se zasekl nebo běží donekonečna. Na konci konzole napíše, jak program skončil: normálně, s jiným návratovým kódem než 0, nebo pádem, třeba <em>segmentation fault</em>.</p>
+      </section>
+
+      <section id="errors">
+        <h2>Chyby při překladu</h2>
+        <figure class="fig">
+          <div class="view" style="--iw:1400;--ih:916">
+            <img src="../assets/manual/error-cs.png" alt="Chybějící středník na řádku 7">
+            <span class="mark" style="--x:24.5;--y:21.6;--w:31.5;--h:3.4"><b>1</b></span>
+            <span class="mark" style="--x:21.8;--y:73.8;--w:37;--h:6.4"><b>2</b></span>
+          </div>
+          <figcaption>Chybějící středník: řádek je zvýrazněný (1) a vypsaný v konzoli (2).</figcaption>
+        </figure>
+
+        <p>Když se program nepřeloží, řádek s chybou se zvýrazní a vedle něj se ukáže hláška kompilátoru (1). Hlášky jsou původní, od kompilátoru, a proto anglicky. Konzole je vypíše všechny (2); kliknutím na hlášku skočíš na její řádek. Varování jsou žlutá a spuštění programu nebrání.</p>
+      </section>
+
+      <section id="files">
+        <h2>Soubory a složky</h2>
+        <p>Ukládat nemusíš: Cecko zapíše změny vteřinu poté, co přestaneš psát, a vždy před spuštěním. <kbd>⌘</kbd><kbd>S</kbd> uloží hned, pokud si chceš být jistý.</p>
+        <ul>
+          <li><span class="ui">Soubor › Nový soubor</span> (<kbd>⌘</kbd><kbd>N</kbd>) vytvoří <code>program.cpp</code> s prázdným <code>main</code>, připravený k doplnění.</li>
+          <li><span class="ui">Soubor › Nová složka</span> (<kbd>⇧</kbd><kbd>⌘</kbd><kbd>N</kbd>) vytvoří složku. Obě akce jsou i dole pod průzkumníkem.</li>
+          <li>Pravým kliknutím na soubor nebo složku je přejmenuješ, ukážeš ve Finderu nebo přesuneš do koše.</li>
+          <li>Změny udělané v jiných aplikacích se ukážou samy.</li>
+          <li>Soubory z Code::Blocks na Windows se otevřou se správnou českou diakritikou a uloží se zpět stejně; funguje i <code>#include &lt;bits/stdc++.h&gt;</code>.</li>
+          <li>Soubor <code>.cpp</code> z Finderu otevřeš volbou <span class="ui">Otevřít v aplikaci › Cecko</span> nebo přetažením na Cecko v Docku. Jeho složka se stane kořenovou.</li>
+        </ul>
+      </section>
+
+      <section id="themes">
+        <h2>Vzhledy</h2>
+        <p>Vzhled vybereš tlačítkem s paletou v nástrojové liště nebo v menu <span class="ui">Zobrazení › Vzhled</span>. Cecko si ho zapamatuje. Výchozí je <b>Glass</b>: čistý, s Liquid Glass, světlý nebo tmavý podle macOS.</p>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="../assets/manual/theme-hacker.png" alt="Hacker">
+          </div>
+          <figcaption><b>Hacker</b>: zelený fosfor na černé, řádkování jako starý monitor a ACCESS GRANTED, když program doběhne.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="../assets/manual/theme-synth.png" alt="Synthwave">
+          </div>
+          <figcaption><b>Synthwave</b>: neonové barvy 80. let a zapadající slunce.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="view" style="--iw:1000;--ih:654">
+            <img src="../assets/manual/theme-cyber.png" alt="Cyberpunk">
+          </div>
+          <figcaption><b>Cyberpunk</b>: ostrá žlutá a tyrkysová s useknutými rohy.</figcaption>
+        </figure>
+      </section>
+
+      <section id="command">
+        <h2>Příkaz cecko</h2>
+        <p>Zvol <span class="ui">Cecko › Instalovat příkaz „cecko“…</span> a zadej heslo k Macu. Pak příkaz <code>cecko .</code> v Terminálu otevře aktuální složku v Cecku a <code>cecko soubor.cpp</code> otevře soubor.</p>
+      </section>
+
+      <section id="compiler">
+        <h2>Když chybí kompilátor</h2>
+        <figure class="fig">
+          <div class="view" style="--iw:1400;--ih:916;--zx:20;--zy:0;--zw:80;--zh:42">
+            <img src="../assets/manual/compiler-missing.png" alt="Pruh, který se ukáže, když chybí kompilátor">
+            <span class="mark" style="--x:21.5;--y:8;--w:77.5;--h:18"><b>1</b></span>
+          </div>
+          <figcaption>Pruh nad editorem (1).</figcaption>
+        </figure>
+
+        <p>Cecko používá bezplatné vývojářské nástroje od Applu (Command Line Tools). Když nejsou nainstalované, nad editorem se objeví pruh a Run nejde použít. Klikni na <span class="ui">Instalovat vývojářské nástroje</span>, potvrď dialog Applu a počkej na stažení (pár minut). Pak klikni na <span class="ui">Zkontrolovat znovu</span>.</p>
+      </section>
+
+      <section id="keys">
+        <h2>Klávesové zkratky</h2>
+        <dl class="controls">
+          <dt><kbd>⌘</kbd><kbd>R</kbd></dt><dd>Spustit otevřený program</dd>
+          <dt><kbd>⌘</kbd><kbd>.</kbd></dt><dd>Zastavit běžící program</dd>
+          <dt><kbd>⌃</kbd><kbd>D</kbd></dt><dd>Ukončit vstup programu</dd>
+          <dt><kbd>⌘</kbd><kbd>K</kbd></dt><dd>Vymazat konzoli</dd>
+          <dt><kbd>⌘</kbd><kbd>F</kbd></dt><dd>Hledat a nahradit v souboru</dd>
+          <dt><kbd>⌘</kbd><kbd>N</kbd> / <kbd>⇧</kbd><kbd>⌘</kbd><kbd>N</kbd></dt><dd>Nový soubor / nová složka</dd>
+          <dt><kbd>⇧</kbd><kbd>⌘</kbd><kbd>O</kbd></dt><dd>Změnit kořenovou složku</dd>
+          <dt><kbd>⌘</kbd><kbd>S</kbd></dt><dd>Uložit hned</dd>
+        </dl>
       </section>
 
       <section id="updates">
         <h2>Aktualizace</h2>
-        <p>Při každém spuštění se Cecko podívá, jestli existuje novější verze,
-        a pokud ano, nabídne ji; bez vašeho souhlasu se nic nenainstaluje.
-        <span class="ui">Cecko › Check for Updates…</span> se zeptá hned.</p>
+        <p>Při každém spuštění se Cecko podívá, jestli existuje novější verze, a pokud ano, nabídne ji; bez tvého souhlasu se nic nenainstaluje. <span class="ui">Cecko › Vyhledat aktualizace…</span> se zeptá hned.</p>
       </section>
     </article>
   </div>

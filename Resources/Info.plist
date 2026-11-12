@@ -6,6 +6,36 @@
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>Cecko</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>C/C++ Source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.c-plus-plus-source</string>
+				<string>public.c-source</string>
+				<string>public.c-header</string>
+				<string>public.c-plus-plus-header</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.folder</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>Cecko</string>
 	<key>CFBundleIconFile</key>
@@ -14,6 +44,11 @@
 	<string>io.jp4.cecko</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>cs</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>Cecko</string>
 	<key>CFBundlePackageType</key>

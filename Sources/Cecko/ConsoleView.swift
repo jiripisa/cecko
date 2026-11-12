@@ -9,6 +9,7 @@ struct ConsoleView: View {
     @Environment(\.theme) private var theme
     let run: RunController
     let onJumpToLine: (Int) -> Void
+    var onRunEnded: () -> Void = {}
 
     @State private var input = ""
     @FocusState private var inputFocused: Bool
@@ -22,10 +23,13 @@ struct ConsoleView: View {
             }
         }
         .background(ThemedBackground(area: .console))
-        .onChange(of: run.state) { _, state in
+        .onChange(of: run.state) { old, state in
             if state == .running {
                 input = ""
                 inputFocused = true
+            } else if old == .running || (old == .compiling && state == .idle) {
+                // The input line is gone; give the keyboard back to the editor.
+                onRunEnded()
             }
         }
     }

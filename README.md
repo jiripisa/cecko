@@ -1,6 +1,6 @@
 # Cecko
 
-A simple, good-looking C++ editor for students: write code, press Run, done.
+A simple C++ editor for students: write code, press Run, done.
 
 Cecko is a small C++ IDE for beginners: an explorer for one folder, an
 editor with syntax highlighting, a Run button and a console that behaves like

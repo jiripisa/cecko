@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0 — 2026-11-13
+
+- First stable version. Same features as 0.8.0.
+
 ## 0.8.0 — 2026-11-12
 
 - Right-click › Insert in the editor adds common constructs: for, for over all items, while and do-while loops; if, if-else, if – else if – else and switch; a function, reading input and printing output. The part to fill in is selected.

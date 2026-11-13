@@ -5,13 +5,13 @@
     <link>https://jiripisa.github.io/cecko/</link>
     <description>Cecko updates</description>
     <item>
-      <title>Cecko 0.8.0</title>
-      <sparkle:version>0.8.0</sparkle:version>
-      <sparkle:shortVersionString>0.8.0</sparkle:shortVersionString>
+      <title>Cecko 1.0.0</title>
+      <sparkle:version>1.0.0</sparkle:version>
+      <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>27.0</sparkle:minimumSystemVersion>
-      <pubDate>Thu, 12 Nov 2026 13:19:32 +0000</pubDate>
-      <description><![CDATA[<ul><li>Right-click › Insert in the editor adds common constructs: for, for over all items, while and do-while loops; if, if-else, if – else if – else and switch; a function, reading input and printing output. The part to fill in is selected.</li><li>App icon without the light edge around the tile.</li></ul>]]></description>
-      <enclosure url="https://github.com/jiripisa/cecko/releases/download/v0.8.0/Cecko-0.8.0.dmg" type="application/octet-stream" sparkle:edSignature="/LfWmKitKrVvouxnL4D5/9kC+PyjaMI8S+pAMyQh/LQiQ39XI6Ti/MkSBl7bZOkNvF9UCyIu2JI+cj8cXGxEDw==" length="2227096"/>
+      <pubDate>Fri, 13 Nov 2026 20:05:35 +0000</pubDate>
+      <description><![CDATA[<ul><li>First stable version. Same features as 0.8.0.</li></ul>]]></description>
+      <enclosure url="https://github.com/jiripisa/cecko/releases/download/v1.0.0/Cecko-1.0.0.dmg" type="application/octet-stream" sparkle:edSignature="XVh8ZEDQiVX+Xg2bwI3HbsBw2MDcFV5ZFvRp4J1EDx/ld4vjW9PexyI6EeDQbDvVhkb6ynYvxVlExOvo82QlCA==" length="2227075"/>
     </item>
   </channel>
 </rss>
